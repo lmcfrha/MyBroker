@@ -6,7 +6,7 @@
 const config_mysql = require('../config/appConfig.json')['mysql']
 var mysql      = require('mysql');
 var connection = mysql.createConnection({
-  host     : '`${config_mysql.host}`',
+  host     : `${config_mysql.host}`,
   port     : '3306',
   user     : 'tmoes',
   password : 'tmoes',
