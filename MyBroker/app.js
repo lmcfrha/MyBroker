@@ -8,7 +8,9 @@ var express = require('express')
   , user = require('./routes/user')
   , http = require('http')
   , path = require('path')
-  , mysql = require('mysql');
+  , adapters = require('./adapters');
+
+
 
 var app = express();
 
