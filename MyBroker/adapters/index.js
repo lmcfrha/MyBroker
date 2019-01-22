@@ -5,19 +5,10 @@
  */
 const config_mysql = require('../config/appConfig.json')['mysql']
 var mysql      = require('mysql');
-var connection = mysql.createConnection({
+exports.dbconnection = mysql.createConnection({
   host     : `${config_mysql.host}`,
-  port     : '3306',
-  user     : 'tmoes',
-  password : 'tmoes',
-  database : 'tmoes'
+  port     : `${config_mysql.port}`,
+  user     : `${config_mysql.user}`,
+  password : `${config_mysql.password}`,
+  database : `${config_mysql.database}`
 });
- 
-connection.connect();
- 
-connection.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
-  if (error) throw error;
-  console.log('The solution is: ', results[0].solution);
-});
- 
-connection.end();

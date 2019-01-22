@@ -11,6 +11,13 @@ var express = require('express')
   , adapters = require('./adapters');
 
 
+adapters.dbconnection.connect();
+adapters.dbconnection.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
+	  if (error) throw error;
+	  console.log('The solution is: ', results[0].solution);
+	}); 
+adapters.dbconnection.end();
+
 
 var app = express();
 
