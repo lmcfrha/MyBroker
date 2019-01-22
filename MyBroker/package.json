@@ -7,7 +7,11 @@
   },
   "dependencies": {
     "express": "3.2.6",
-    "mysql" : "2.16.0",
+    "mysql": "2.16.0",
+    "pbkdf2-password": "1.2.1",
+    "express-session": "1.15.6",
+    "express-mysql-session": "2.1.0",
+    "ejs": "2.6.1",
     "jade": "*"
   }
 }

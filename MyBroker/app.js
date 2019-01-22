@@ -8,7 +8,8 @@ var express = require('express')
   , user = require('./routes/user')
   , http = require('http')
   , path = require('path')
-  , adapters = require('./adapters');
+  , adapters = require('./adapters')
+  , auth = require('./auth');
 
 
 adapters.dbconnection.connect();
@@ -32,6 +33,8 @@ app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
+// mount the auth sub-app on /mybroker
+app.use('/mybroker/', auth);
 // development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
