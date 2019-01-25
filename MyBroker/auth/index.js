@@ -101,7 +101,7 @@ app.get('/login', function(req, res){
 
 app.get('/register', function(req, res){
 	  res.render('register');
-	});
+});
 
 app.post('/login', function(req, res){
   authenticate(req.body.username, req.body.password, function(err, user){
