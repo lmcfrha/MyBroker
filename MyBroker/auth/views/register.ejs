@@ -1,0 +1,25 @@
+<% var title = 'Create Account' %>
+<% include head %>
+
+<h1>Create your account</h1>
+<%- message %>
+Try accessing <a href="restricted">../restricted</a>, then authenticate with "tj" and "foobar".
+<form method="post" action="register">
+  <p>
+    <label>Choose Username:</label>
+    <input type="text" name="username">
+  </p>
+  <p>
+    <label>Choose Password:</label>
+    <input type="text" name="password">
+  </p>
+  <p>
+    <label>Enter Email:</label>
+    <input type="text" name="email">
+  </p>
+  <p>
+    <input type="submit" value="Create Account">
+  </p>
+</form>
+
+<% include foot %>
