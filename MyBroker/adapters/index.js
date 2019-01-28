@@ -4,7 +4,10 @@
  * 
  */
 const config_mysql = require('../config/appConfig.json')['mysql']
+const config_createtables = require('../config/appConfig.json')['tabledefinitions']
+
 var mysql      = require('mysql');
+
 dbconnection = mysql.createConnection({
   host     : `${config_mysql.host}`,
   port     : `${config_mysql.port}`,
@@ -41,11 +44,11 @@ function dbload(step,connection) {
 		      }
 		      });
 		break;
-	case 1: /* Connect to DB */
+	case 1: /* Select the mybroker DB */
 		console.log('-----------Entering STEP '+step)
 		connection.changeUser({database : dbname}, function (err, result) {
 		    if (err) {
-		    	 console.log('Error connecting to database: ' + err.message);
+		    	 console.log('Error selecting the database: ' + err.message);
 		    	 console.log ('...will try to create the database.');
 		    	 dbstep = 2;
 				 dbload(dbstep,connection);
@@ -56,9 +59,9 @@ function dbload(step,connection) {
 		    }
 		    });
 		break;
-	case 2: /* Create to DB, assuming it's a new installation */
+	case 2: /* Create the DB, assuming it's a new installation */
 		console.log('-----------Entering STEP '+step)
-		console.log('recreate the sql server connection before')
+		console.log('recreate the sql server connection')
 		dbconnection = mysql.createConnection({
 						host     : `${config_mysql.host}`,
 						port     : `${config_mysql.port}`,
@@ -70,8 +73,8 @@ function dbload(step,connection) {
 		    	 console.error('Error creating DB: ' + err.message);
 		    	 console.log ('...go troubleshoot yourself.');
 		    } else {
-		    	 console.log("Created "+ dbname + "; proceed to create tables.");
-		    	 dbstep = 4;
+		    	 console.log(dbname + " database created successfully; proceed to select DB.");
+		    	 dbstep = 1;
 		    	 dbload(dbstep,dbconnection);
 		    }
 		  });
@@ -80,11 +83,85 @@ function dbload(step,connection) {
 		console.log('-----------Entering STEP '+step)
 		console.log("Read tables.");
 		break;
-	case 4: /* Create Tables */
+	case 4: /* Create Table Profile */
 		console.log('-----------Entering STEP '+step)
-		console.log("Create tables.");
-		dbstep = 3;
-		dbload(dbstep,dbconnection);
+		console.log("Create PROFILES table: " + `${config_createtables.profile}`);
+		connection.query(`${config_createtables.profile}`, function (err, results, fields) {
+			  // error will be an Error if one occurred during the query
+			  // results will contain the results of the query
+			  // fields will contain information about the returned results fields (if any)
+		    if (err) {
+		    	 console.error('Error creating table: ' + err.message);
+		    	 console.log ('...go troubleshoot yourself.');
+		    } else {
+		    	dbstep = 4.1;
+		   		dbload(dbstep,connection);
+		    }
+		   });
+		break;
+	case 4.1: /* Create Table Ticker */
+		console.log('-----------Entering STEP '+step)
+		console.log("Create TICKERS table: " + `${config_createtables.ticker}`);
+		connection.query(`${config_createtables.ticker}`, function (err, results, fields) {
+			  // error will be an Error if one occurred during the query
+			  // results will contain the results of the query
+			  // fields will contain information about the returned results fields (if any)
+		    if (err) {
+		    	 console.error('Error creating table: ' + err.message);
+		    	 console.log ('...go troubleshoot yourself.');
+		    } else {
+		    	dbstep = 4.2;
+		   		dbload(dbstep,connection);
+		    }
+		   });
+		break;
+	case 4.2: /* Create Table User */
+		console.log('-----------Entering STEP '+step)
+		console.log("Create USERS table: " + `${config_createtables.user}`);
+		connection.query(`${config_createtables.user}`, function (err, results, fields) {
+			  // error will be an Error if one occurred during the query
+			  // results will contain the results of the query
+			  // fields will contain information about the returned results fields (if any)
+		    if (err) {
+		    	 console.error('Error creating table: ' + err.message);
+		    	 console.log ('...go troubleshoot yourself.');
+		    } else {
+		    	dbstep = 4.3;
+		   		dbload(dbstep,connection);
+		    }
+		   });
+		break;
+	case 4.3: /* Create Table Account */
+		console.log('-----------Entering STEP '+step)
+		console.log("Create ACCOUNTS table: " + `${config_createtables.account}`);
+		connection.query(`${config_createtables.account}`, function (err, results, fields) {
+			  // error will be an Error if one occurred during the query
+			  // results will contain the results of the query
+			  // fields will contain information about the returned results fields (if any)
+		    if (err) {
+		    	 console.error('Error creating table: ' + err.message);
+		    	 console.log ('...go troubleshoot yourself.');
+		    } else {
+		    	dbstep = 4.4;
+		   		dbload(dbstep,connection);
+		    }
+		   });
+		break;
+	case 4.4: /* Create Table Account */
+		console.log('-----------Entering STEP '+step)
+		console.log("Create TRANSACTIONLOGS table: " + `${config_createtables.transactionlog}`);
+		connection.query(`${config_createtables.transactionlog}`, function (err, results, fields) {
+			  // error will be an Error if one occurred during the query
+			  // results will contain the results of the query
+			  // fields will contain information about the returned results fields (if any)
+		    if (err) {
+		    	 console.error('Error creating table: ' + err.message);
+		    	 console.log ('...go troubleshoot yourself.');
+		    } else {
+		    	dbstep = 3;
+		   		dbload(dbstep,connection);
+		    }
+		   });
 		break;
 	} /* end switch */
 		
