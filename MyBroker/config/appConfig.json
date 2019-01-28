@@ -6,7 +6,16 @@
 	  "password" : "tmoes",
 	  "database" : "mybroker"
   },
-
+  
+  "tabledefinitions" : {
+	  "profile"	: CREATE TABLE `profile`
+	  (
+			  `profilename` varchar(45) NOT NULL ,
+			  `risk`        varchar(45) NOT NULL ,
+			 PRIMARY KEY (`profilename`)
+			 );
+  },
+  
   "login-portal": {
     "path": "/login",
     "enable-http": true,

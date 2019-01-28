@@ -9,12 +9,15 @@
 
 
 ## Developing
-Based on http://expressjs.com
+Based on [http://expressjs.com](http://expressjs.com)
 framework
 
-Using stock quotes from Alphavantage. Example:
+Database Design:
+[https://app.sqldbm.com/MySQL/Edit/p54183/](https://app.sqldbm.com/MySQL/Edit/p54183/)
 
+Using stock quotes from Alphavantage. Example:
 [https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=TSX:ALA&apikey=MCAF9B429I44328U](https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=TSX:ALA&apikey=MCAF9B429I44328U)
+
 
 {
     "Global Quote": {
