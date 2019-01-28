@@ -51,7 +51,7 @@ function dbload(step,connection) {
 				 dbload(dbstep,connection);
 		    } else {
 		    	 console.log("Connected to database "+ dbname + "; proceed to read tables.");
-		    	 dbstep = dbstep + 2;
+		    	 dbstep = 3;
 		    	 dbload(dbstep,connection);
 		    }
 		    });
@@ -71,7 +71,7 @@ function dbload(step,connection) {
 		    	 console.log ('...go troubleshoot yourself.');
 		    } else {
 		    	 console.log("Created "+ dbname + "; proceed to create tables.");
-		    	 dbstep = 3;
+		    	 dbstep = 4;
 		    	 dbload(dbstep,dbconnection);
 		    }
 		  });
@@ -79,10 +79,15 @@ function dbload(step,connection) {
 	case 3: /* Read tables */
 		console.log('-----------Entering STEP '+step)
 		console.log("Read tables.");
+		break;
+	case 4: /* Create Tables */
+		console.log('-----------Entering STEP '+step)
+		console.log("Create tables.");
+		dbstep = 3;
+		dbload(dbstep,dbconnection);
+		break;
+	} /* end switch */
 		
-	}
-	
-	
 }
 
 dbload(dbstep,dbconnection); /* initiate the DB loading or creation if needed */
