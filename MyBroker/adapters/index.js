@@ -167,16 +167,6 @@ function dbload(step,connection) {
 		
 }
 
-dbload(dbstep,dbconnection); /* initiate the DB loading or creation if needed */
-
-/* dbconnection.connect(function(err) {
-	  if (err) {
-		    console.error('error connecting: ' + err.stack);
-		    return;
-		  }
-		 
-		  console.log('connected as id ' + connection.threadId);
-		});
-*/
+dbload(dbstep,dbconnection); 
 exports.dbconnection=dbconnection;
 
