@@ -14,7 +14,12 @@
 	  "account": "CREATE TABLE `account`( `username` varchar(45) NOT NULL UNIQUE , `accountid` integer NOT NULL UNIQUE , `profilename` varchar(45) NOT NULL , `symbol` varchar(45) NOT NULL , `exchange` varchar(45) NOT NULL , `units` int , `cash` decimal , PRIMARY KEY (`username`, `accountid`), KEY `fkIdx_32` (`username`), CONSTRAINT `FK_32` FOREIGN KEY `fkIdx_32` (`username`) REFERENCES `user` (`username`),KEY `fkIdx_36` (`profilename`),CONSTRAINT `FK_36` FOREIGN KEY `fkIdx_36` (`profilename`) REFERENCES `profile` (`profilename`),KEY `fkIdx_43` (`symbol`, `exchange`, `profilename`),CONSTRAINT `FK_43` FOREIGN KEY `fkIdx_43` (`symbol`, `exchange`, `profilename`) REFERENCES `ticker` (`symbol`, `exchange`, `profilename`))",
 	  "transactionlog": "CREATE TABLE `transactionlog`( `transactionid` varchar(45) NOT NULL UNIQUE , `username` varchar(45) NOT NULL , `accountid`     integer NOT NULL , `date`          datetime NOT NULL , `type`          varchar(45) NOT NULL , `description`   multilinestring NOT NULL , `accountbefore` json NOT NULL , `accountafter`  json NOT NULL ,PRIMARY KEY (`transactionid`, `username`, `accountid`),KEY `fkIdx_53` (`username`, `accountid`),CONSTRAINT `FK_53` FOREIGN KEY `fkIdx_53` (`username`, `accountid`) REFERENCES `account` (`username`, `accountid`))"
   },
-  
+
+  "fetchtables": {
+	  "profile": "SELECT * FROM `profile`",
+	  "ticker": "SELECT * FROM `ticker`"
+  },
+
   "login-portal": {
     "path": "/login",
     "enable-http": true,
