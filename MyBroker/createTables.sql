@@ -55,8 +55,8 @@ PRIMARY KEY (`username`)
 
 CREATE TABLE `account`
 (
- `username`      varchar(45) NOT NULL DEFAULT UNIQUE ,
- `accountid`     integer NOT NULL DEFAULT UNIQUE ,
+ `username`      varchar(45) NOT NULL UNIQUE ,
+ `accountid`     integer NOT NULL UNIQUE ,
  `profilename`   varchar(45) NOT NULL ,
  `symbol`        varchar(45) NOT NULL ,
  `exchange`      varchar(45) NOT NULL ,
@@ -77,7 +77,7 @@ CONSTRAINT `FK_43` FOREIGN KEY `fkIdx_43` (`symbol`, `exchange`, `profilename`) 
 
 CREATE TABLE `transactionlog`
 (
- `transactionid`  NOT NULL DEFAULT UNIQUE ,
+ `transactionid`  NOT NULL UNIQUE ,
  `username`      varchar(45) NOT NULL ,
  `accountid`     integer NOT NULL ,
  `date`          datetime NOT NULL ,

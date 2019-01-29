@@ -18,7 +18,7 @@ dbconnection = mysql.createConnection({
 
 var dbname = `${config_mysql.database}`;
 var dbstep = 0;
-var profiles, tickers;
+profiles = null; tickers = null;
 var dbready = false;
  
 /** dbstep : basically odd is good, even is bad
@@ -207,4 +207,7 @@ function dbload(step,connection) {
 
 dbload(dbstep,dbconnection); 
 exports.dbconnection=dbconnection;
+exports.profiles=profiles;
+exports.tickers=tickers;
+
 
