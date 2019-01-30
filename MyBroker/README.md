@@ -12,6 +12,8 @@
 Based on [http://expressjs.com](http://expressjs.com)
 framework
 
+Using session store [express-mysql-session](https://www.npmjs.com/package/express-mysql-session)
+
 Database Design:
 [https://app.sqldbm.com/MySQL/Edit/p54183/](https://app.sqldbm.com/MySQL/Edit/p54183/)
 

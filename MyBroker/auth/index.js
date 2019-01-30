@@ -6,6 +6,17 @@ var express = require('express');
 var hash = require('pbkdf2-password')()
 var path = require('path');
 var session = require('express-session');
+/* Session store business... */
+var MySQLStore = require('express-mysql-session')(session);
+const config_mysql = require('../config/appConfig.json')['mysql']
+var options = {
+	  host     : `${config_mysql.host}`,
+	  port     : `${config_mysql.port}`,
+	  user     : `${config_mysql.user}`,
+	  password : `${config_mysql.password}`,
+      database : `${config_mysql.database}`
+	};
+var sessionStore = new MySQLStore(options);
 
 var app = module.exports = express();
 
@@ -20,7 +31,8 @@ app.use(express.urlencoded({ extended: false }))
 app.use(session({
   resave: false, // don't save session if unmodified
   saveUninitialized: false, // don't create session until something stored
-  secret: 'shhhh, very secret'
+  secret: 'shhhh, very secret',
+  store: sessionStore,
 }));
 
 // Session-persisted message middleware
