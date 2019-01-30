@@ -91,7 +91,9 @@ function dbload(step) {
 			  // fields will contain information about the returned results fields (if any)
 		    if (err) {
 		    	 console.error('Error reading table: ' + err.message);
-		    	 console.log ('...go troubleshoot yourself.');
+		    	 console.log ('...assuming the DB has been dropped - recreating from scratch.');
+		    	 dbstep = 4.1;
+		    	 dbload(dbstep);
 		    } else {
 		    	exports.profiles = results;
 		    	console.log(exports.profiles);

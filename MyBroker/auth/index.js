@@ -3,9 +3,10 @@
  */
 
 var express = require('express');
-var hash = require('pbkdf2-password')()
+var hash = require('pbkdf2-password')({ saltLength: 5})
 var path = require('path');
 var session = require('express-session');
+var mysql      = require('mysql');
 /* Session store business... */
 var MySQLStore = require('express-mysql-session')(session);
 const config_mysql = require('../config/appConfig.json')['mysql']
@@ -17,7 +18,7 @@ var options = {
       database : `${config_mysql.database}`
 	};
 var sessionStore = new MySQLStore(options);
-
+/* End session store setup */
 var app = module.exports = express();
 
 // config
@@ -62,9 +63,21 @@ hash({ password: 'foobar' }, function (err, pass, salt, hash) {
   // store the salt & hash in the "db"
   users.tj.salt = salt;
   users.tj.hash = hash;
+  console.log(users);
 });
 
-
+var createUser = (u,f,l,e,s,t) => { return function (err, pass, salt, hash) {
+	  if (err) throw err;
+	  // store the salt & hash in the "db"
+	  var sql = "INSERT INTO user values (?,?,?,?,?,?,?,?,NOW());"
+	  var inserts = [u,f,l,salt,hash,e,'S','T'];
+	  sql = mysql.format(sql,inserts);
+	  adapters.dbconnection.query(sql,function (error, results, fields) {
+		  if (error) throw error;
+		  // ...
+		});
+	  console.log("impressive or not??");
+	};	  }
 // Authenticate using our plain-object database of doom!
 
 function authenticate(name, pass, fn) {
@@ -114,7 +127,15 @@ app.get('/login', function(req, res){
 app.get('/register', function(req, res){
 	  res.render('register');
 });
-
+app.post('/register', function(req, res){
+	console.log(req)
+	hash({ password: req.body.password }, createUser(req.body.username,
+			req.body.firstname,
+			req.body.lastname,
+			req.body.email,
+			'on verra','plus tard'));	  
+	  res.send('congrats');
+});
 app.post('/login', function(req, res){
   authenticate(req.body.username, req.body.password, function(err, user){
     if (user) {

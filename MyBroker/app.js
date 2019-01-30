@@ -2,14 +2,16 @@
 /**
  * Module dependencies.
  */
+/* Global vars */
+adapters = require('./adapters')
 
 var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
   , http = require('http')
   , path = require('path')
-  , adapters = require('./adapters')
   , auth = require('./auth');
+
 
 
 var app = express();
@@ -42,5 +44,5 @@ http.createServer(app).listen(app.get('port'), function(){
 setTimeout(function (){
 	console.log(adapters.profiles);
 	console.log(adapters.tickers[1]);
-	adapters.dbconnection.end();
+/*	adapters.dbconnection.end();*/
 }, 5000);
