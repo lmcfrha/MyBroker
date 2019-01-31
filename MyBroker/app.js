@@ -1,7 +1,11 @@
 
 /**
  * Module dependencies.
+ * By the way this is a pretty old express version 3.2.6 according to package.json.
+ * In his older express version, some middleware was bundled, as part of the connect module.
+ * Check the node_modules/connect/lib/middleware folder to get the idea.
  */
+
 /* Global vars */
 adapters = require('./adapters')
 

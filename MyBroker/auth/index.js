@@ -50,7 +50,7 @@ app.use(function(req, res, next){
 });
 
 // dummy database
-
+/*
 var users = {
   tj: { name: 'tj' }
 };
@@ -65,7 +65,14 @@ hash({ password: 'foobar' }, function (err, pass, salt, hash) {
   users.tj.hash = hash;
   console.log(users);
 });
+*/
 
+/**
+ * createUser returns the hash call back function, parameterized with the info submitted in the form
+ * (req form parameters) so it all can be used to update the user table 
+ * in the DB
+ *  
+ **/
 var createUser = (u,f,l,e,s,t) => { return function (err, pass, salt, hash) {
 	  if (err) throw err;
 	  // store the salt & hash in the "db"
@@ -78,13 +85,28 @@ var createUser = (u,f,l,e,s,t) => { return function (err, pass, salt, hash) {
 		});
 	  console.log("impressive or not??");
 	};	  }
+
+
 // Authenticate using our plain-object database of doom!
 
 function authenticate(name, pass, fn) {
   if (!module.parent) console.log('authenticating %s:%s', name, pass);
-  var user = users[name];
+  // Fetch user from user table
+  var sql = "SELECT * FROM user where username=? ;"
+  var inserts = [name];
+  sql = mysql.format(sql,inserts);
+  adapters.dbconnection.query(sql,function (error, results, fields) {
+	if (error) throw error;
+	console.log(results[0].lastname);
+	hash({ password: pass, salt: results[0].salt }, function (err, pass, salt, hash) {
+			    if (err) return fn(err);
+			    if (hash === results[0].hash) return fn(null, results[0])
+			    fn(new Error('invalid password'));
+			  });
+		  // ...
+		});
   // query the db for the given username
-  if (!user) return fn(new Error('cannot find user'));
+/*  if (!user) return fn(new Error('cannot find user'));
   // apply the same algorithm to the POSTed password, applying
   // the hash against the pass / salt, if there is a match we
   // found the user
@@ -93,6 +115,7 @@ function authenticate(name, pass, fn) {
     if (hash === user.hash) return fn(null, user)
     fn(new Error('invalid password'));
   });
+  */
 }
 
 function restrict(req, res, next) {
@@ -145,8 +168,8 @@ app.post('/login', function(req, res){
         // Store the user's primary key
         // in the session store to be retrieved,
         // or in this case the entire user object
-        req.session.user = user;
-        req.session.success = 'Authenticated as ' + user.name
+        req.session.user = user.username;
+        req.session.success = 'Authenticated as ' + user.firstname + ' ' +user.lastname 
           +  ' click to <a href="logout">logout</a>. '
           + ' You may now access <a href="restricted">restricted</a>.';
         res.redirect('back');
