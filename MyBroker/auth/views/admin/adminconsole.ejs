@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MyBrokerAdminConsole</title>
+    <style title="AdminConsole">
+ 			body {
+  			margin: 0;
+			}
+      /* Page layout */
+      .topline { grid-area: header; 
+               color: black; 
+               background-color: white; 
+               padding: 15px; 
+               text-align: center; 
+               margin: 0; 
+               position: sticky;
+               top: 0;
+							 }
+      .sidemenu { grid-area: menu; margin: 0;}
+      /* the following classes are for the workspace area, 
+      using z-index to bring up front the div to activate */
+			.profilelist { grid-area: main; 
+               background-color: black; 
+               color: yellow; 
+               text-align: center; 
+               margin: 0;
+      				 }
+      .newprofile { grid-area: main; 
+               background-color: black;
+               color: yellow; 
+               text-align: center; 
+               margin: 0;
+               z-index: -1; 
+      				 }
+      .newTicker {
+        				position: absolute;
+        				top: 25%;
+        				left: 25%;
+        				height: 50%;
+        				width: 50%;
+               	background-color: lightblue;
+               	color: black; 
+               	text-align: center; 
+               	margin: 0;
+               	z-index: -1; 
+                overflow: auto;
+      				 }
+
+      .workspace {
+        margin: 0;
+  			display: grid;
+        grid-template-columns: 100px 1fr 1fr 1fr;
+        grid-template-rows: 1fr 200px 200px 200px;
+        grid-template-areas:
+			    'header header header header'
+			    'menu main main main'
+			    'menu main main main'
+          'menu main main main'
+			    'menu main main main';
+			}
+      /* End page layout */
+      /* Format the menu */
+      #menuprincipal ul {
+  			list-style-type: none;
+  			margin: 0;
+  			padding: 0;
+  			background-color: #f1f1f1;
+        height: 75%;  /* Full height */
+			  position: fixed; /*  Make it stick, even on scroll */
+			  overflow: auto;  /* Enable scrolling if the sidenav has too much content */
+      }
+    	#menuprincipal li a {
+    			display: block;
+          color: red;
+				  padding: 8px 16px;
+          text-decoration: none;
+			}
+      /* Change the link color on hover */
+      #menuprincipal li a.active {
+ 			 	background-color: #4CAF50;
+			  color: white;
+			}
+
+			#menuprincipal li a:hover:not(.active) {
+			  background-color: #555;
+			  color: white;
+			}
+    </style>
+  </head>
+  <body>
+    <div class="workspace">
+      <div class="topline">MY BROKER ADMIN CONSOLE</div>
+      <div class="sidemenu" id="menuprincipal">
+        <ul>
+          <li><a class="active" href="Profiles">Profiles</a></li>
+          <li><a href="Users">Users</a></li>
+          <li><a href="Accounts">Accounts</a></li>
+          <li><a href="Abaoot">Blah</a></li>
+        </ul>
+      </div>
+      <div class="profilelist">
+        <p>PROFILE LIST </p>
+        <input name="New..." value=" New... " form="ProfileCommand" class="newProfile" type="submit"> 
+        <input name="Modify" value=" Edit..." form="ProfileCommand" type="submit">
+        <input name="Delete" value=" Delete " form="ProfileCommand" type="submit">
+      </div>
+      <div class="newprofile">
+        <p style="text-align: center;">DEFINE NEW PROFILE</p>
+        <input name="Add" value="Add..." form="ProfileCommand" type="submit"> 
+        <input name="Save" value=" Save " form="ProfileCommand" class="saveNewProfile" type="submit">
+        <input name="Cancel" value=" Cancel " form="ProfileCommand" class="cancelNewProfile" type="submit"> 
+      </div>
+      <div class="newTicker">
+        <p style="text-align: center;">ADD A NEW SYMBOL TO THE PROFILE </p>
+        <input name="Check" value=" Check " form="ProfileCommand" class="saveNewProfile" type="submit"> 
+        <input name="Save" value=" Save " form="ProfileCommand" class="saveNewProfile" type="submit"> 
+        <input name="Cancel" value=" Cancel " form="ProfileCommand" class="cancelNewProfile" type="submit"> </div>
+    </div>
+    <script>
+      const newProfile = document.querySelector('.newProfile');
+      const newprofilediv = document.querySelector('.newprofile');
+      const cancelNewProfilediv = document.querySelector('.cancelNewProfile');
+        
+      function createProfile() {
+        newprofilediv.style.zIndex=10; 
+      }
+      function cancelNewProfile() {
+        newprofilediv.style.zIndex=-1; 
+      }  
+      newProfile.addEventListener('click',createProfile); 
+      cancelNewProfilediv.addEventListener('click',cancelNewProfile); 
+    </script>
+  </body>
+</html>

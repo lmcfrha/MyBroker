@@ -87,15 +87,16 @@ var createUser = (u,f,l,e,s,t) => { return function (err, pass, salt, hash) {
 	};	  }
 
 
-// Authenticate using our plain-object database of doom!
+// Authenticate using database
 
 function authenticate(name, pass, fn) {
   if (!module.parent) console.log('authenticating %s:%s', name, pass);
-  // Fetch user from user table
+  // Fetch user row from user table
   var sql = "SELECT * FROM user where username=? ;"
   var inserts = [name];
   sql = mysql.format(sql,inserts);
   adapters.dbconnection.query(sql,function (error, results, fields) {
+  // Make the hash calculation with password entered - verify and call fn according to the result
 	if (error) throw error;
 	console.log(results[0].lastname);
 	hash({ password: pass, salt: results[0].salt }, function (err, pass, salt, hash) {
@@ -150,6 +151,18 @@ app.get('/login', function(req, res){
 app.get('/register', function(req, res){
 	  res.render('register');
 });
+
+app.get('/register', function(req, res){
+	  res.render('register');
+});
+
+app.get('/admin', function(req, res){
+	  if (req.session.user != 'admin') {
+		  res.status(401).send('Unauthorized Access yada yada');
+	  }
+	  res.render('admin/adminconsole');
+});
+
 app.post('/register', function(req, res){
 	console.log(req)
 	hash({ password: req.body.password }, createUser(req.body.username,
@@ -171,7 +184,7 @@ app.post('/login', function(req, res){
         req.session.user = user.username;
         req.session.success = 'Authenticated as ' + user.firstname + ' ' +user.lastname 
           +  ' click to <a href="logout">logout</a>. '
-          + ' You may now access <a href="restricted">restricted</a>.';
+          + ' You may now access <a href="admin">the admin console</a>.';
         res.redirect('back');
       });
     } else {
