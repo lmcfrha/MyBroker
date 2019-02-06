@@ -1,4 +1,4 @@
-<style>
+    <style title="AdminConsole">
  			body {
   			margin: 0;
 			}
@@ -15,14 +15,16 @@
       .sidemenu { grid-area: menu; margin: 0;}
       /* the following classes are for the workspace area, 
       using z-index to bring up front the div to activate */
-			.profilelist { grid-area: main; 
+			.profileList { 
+               grid-area: main; 
                background-color: black; 
                color: yellow; 
                text-align: center; 
                margin: 0;
       				 }
-      .newprofile { grid-area: main; 
-               background-color: black;
+      .newProfile { 
+               grid-area: main; 
+               background-color: grey;
                color: yellow; 
                text-align: center; 
                margin: 0;
@@ -54,6 +56,25 @@
           'menu main main main'
 			    'menu main main main';
 			}
+      
+      
+      table, th, td {
+  			border: 1px solid black;
+			}
+      table.center {
+   			 margin-left:auto; 
+   			 margin-right:auto;
+ 			}
+      table.fullwidth {
+      	width: 100%;
+			}
+
+      th {
+  			height: 50px;
+        background-color: #4CAF50;
+			  color: white;
+			}
+      td { height: 25px;}
       /* End page layout */
       /* Format the menu */
       #menuprincipal ul {
@@ -65,7 +86,7 @@
 			  position: fixed; /*  Make it stick, even on scroll */
 			  overflow: auto;  /* Enable scrolling if the sidenav has too much content */
       }
-      #menuprincipal li a {
+    	#menuprincipal li a {
     			display: block;
           color: red;
 				  padding: 8px 16px;
@@ -77,8 +98,8 @@
 			  color: white;
 			}
 
-	  #menuprincipal li a:hover:not(.active) {
+			#menuprincipal li a:hover:not(.active) {
 			  background-color: #555;
 			  color: white;
 			}
-</style>
+    </style>
