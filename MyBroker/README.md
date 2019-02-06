@@ -14,6 +14,8 @@ framework
 
 Using session store [express-mysql-session](https://www.npmjs.com/package/express-mysql-session)
 
+[Server side events information](https://stackoverflow.com/questions/11077857/what-are-long-polling-websockets-server-sent-events-sse-and-comet)
+
 Database Design:
 [https://app.sqldbm.com/MySQL/Edit/p54183/](https://app.sqldbm.com/MySQL/Edit/p54183/)
 
