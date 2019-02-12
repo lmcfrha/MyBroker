@@ -5,7 +5,7 @@
     <title>MyBrokerAdminConsole</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <!-- html to json plugin: https://www.npmjs.com/package/table-to-json -->
-    <script src="scripts/jquery.tabletojson.js"></script>
+    <script src="/scripts/jquery.tabletojson.js"></script>
     <script> 
     $(document).ready(function(){
       function saveProfileTable() {
@@ -35,7 +35,7 @@
     </script>
     <% include ../stylesheets/adminstyle %>
   </head>
-<body>
+  <body>
     <div class="workspace">
       <div class="topline">MY BROKER ADMIN CONSOLE</div>
       <div class="sidemenu" id="menuprincipal">
@@ -52,8 +52,8 @@
           <table id="profileListTable">
           </table>
         </div>
-        <button id="createProfile" onclick="createProfile()"> New...
-        </button> <input name="Modify" value=" Edit..." form="ProfileCommand" type="submit">
+        <button id="createProfile" onclick="createProfile()"> New... </button>
+        <input name="Modify" value=" Edit..." form="ProfileCommand" type="submit">
         <input name="Delete" value=" Delete " form="ProfileCommand" type="submit">
       </div>
       <div id="newProfile" class="newProfile">
@@ -89,8 +89,7 @@
             </tr>
             <tr>
               <td>Cash</td>
-              <td><br>
-              </td>
+              <td>N/A</td>
               <td id="targetCash">100</td>
               <td><br>
               </td>
@@ -102,9 +101,10 @@
           </table>
         </div>
         <button id="addTicker" onclick="addTickerRow('profileTickers')"> Add </button>
-        <input name="Cancel" value=" Cancel " form="ProfileCommand" class="cancelNewProfile"
+        <button id="saveProfile" onclick="saveProfileTable('profileTickers')">
+          Save </button> <input name="Cancel" value=" Cancel " form="ProfileCommand"
 
-type="submit"> </div>
+class="cancelNewProfile" type="submit"> </div>
       <div id="newTicker" class="newTicker">
         <p style="text-align: center;">ADD A NEW SYMBOL TO THE PROFILE </p>
         <input name="Check" value=" Check " form="ProfileCommand" class="saveNewProfile"
@@ -161,6 +161,7 @@ type="submit"> </div>
         target.setAttribute('class','target');
         target.setAttribute('onblur','recalculate(this)');
         row.insertCell();
+       
       }
       
       function recalculate(tc) {
@@ -173,6 +174,10 @@ type="submit"> </div>
              console.log(sum);
            }
            targetCash.innerText = 100 - sum;
+      }
+      
+      function saveProfileTable(t) {
+        
       }
       
 /*      function cancelNewProfile() {
