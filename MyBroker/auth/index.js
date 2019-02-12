@@ -127,6 +127,13 @@ function restrict(req, res, next) {
     res.redirect('../login');
   }
 }
+function roleAdmin(req, res, next) {
+	  if (req.session.user != 'admin') {
+		  res.status(401).send('Unauthorized Access yada yada');
+	  } else {
+	    next();
+	  }
+}
 
 app.get('/', function(req, res){
   res.redirect('./login');
@@ -156,11 +163,13 @@ app.get('/register', function(req, res){
 	  res.render('register');
 });
 
-app.get('/admin', function(req, res){
-	  if (req.session.user != 'admin') {
-		  res.status(401).send('Unauthorized Access yada yada');
-	  }
+
+app.get('/admin', roleAdmin, function(req, res){
 	  res.render('admin/adminconsole');
+});
+app.post('/admin', roleAdmin, function(req,res){
+	  console.log(req);
+	  res.send('Received');
 });
 
 app.post('/register', function(req, res){
