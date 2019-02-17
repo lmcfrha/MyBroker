@@ -168,8 +168,15 @@ app.get('/admin', roleAdmin, function(req, res){
 	  res.render('admin/adminconsole');
 });
 app.post('/admin', roleAdmin, function(req,res){
-	  console.log(req);
-	  res.send('Received');
+	  console.log(req.body);
+	  console.log(req.body.name);
+	  console.log(req.body.stocks);
+	  console.log(req.body.stocks[0].Ticker);  
+	  console.log(req.body.stocks.length);
+	  // Update the DB: Tickers, Profiles
+	  // Add new tickers to ticker feed
+	  
+	  res.json(req.body);
 });
 
 app.post('/register', function(req, res){

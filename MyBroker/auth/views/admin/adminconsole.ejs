@@ -7,8 +7,12 @@
     <!-- html to json plugin: https://www.npmjs.com/package/table-to-json -->
     <script src="/scripts/jquery.tabletojson.js"></script>
     <script> 
+    
+    <!-- JQuery section -->
     $(document).ready(function(){
+
       function saveProfileTable() {
+    <!-- This function turns the table into a JSON object and saves the new profile in the DB -->
         try {
              var tableJson = $('#profileTickers').tableToJSON(
                {
@@ -22,17 +26,29 @@
                  }
                }
                );
-             console.log(tableJson);
+             tableJson.name = newProfile.profileName;
+             tableJson.risk = newProfile.risk;
+             postNewProfile = { "name": newProfile.profileName, "risk":newProfile.risk, "stocks": tableJson}; 
+              console.log(postNewProfile);
+             $.when( $.ajax({ method: 'POST', data: postNewProfile , datatype: 'json' }) )
+              .then(function(response, status, xhr){console.log(response);});
+                 
         }
         catch(e) {
           alert("Empty cells. \nFill up all fields before saving");
         }
       }
+      
       $("#saveProfile").click(function(event){ saveProfileTable() });
-  	// jQuery methods go here...
+  	
+
 
 		});
     </script>
+    <!-- End JQuery section -->
+    
+    
+    
     <% include ../stylesheets/adminstyle %>
   </head>
   <body>
@@ -133,9 +149,7 @@ type="submit"> </div>
       class Profile {
         constructor(name,risk) {
           this.profileName=name;
-        	this.risk=risk;
-          this.cash=100;
-          this.tickList=[new Ticker('$$$',100,'')];
+          this.risk=risk;
         }
       }
       
