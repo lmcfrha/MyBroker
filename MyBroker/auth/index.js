@@ -168,21 +168,20 @@ app.get('/admin', roleAdmin, function(req, res){
 	  res.render('admin/adminconsole');
 });
 app.post('/admin', roleAdmin, function(req,res){
-	  console.log(req.body);
-	  console.log(req.body.name);
+/*	  console.log(req.body.name);
 	  console.log(req.body.stocks);
 	  console.log(req.body.stocks[0].Ticker);  
 	  console.log(req.body.stocks.length);
-	  
+*/	  
 	  // Update the DB: Tickers, Profiles
 	  // Add new tickers to ticker feed
 	  var sql = "INSERT INTO profile VALUES (?,?);";
 	  var inserts = [req.body.name,req.body.risk];	
 	  sql = mysql.format(sql,inserts);
+	  console.log(sql);
 	  mySqlPromise(sql,adapters)
-	  .then((result)=>{console.log("yeaaaaa Affected Rows:");console.log(result.affectedRows)},
-			(error)=>{console.log("oooops");console.log(error)})
-	  .catch(function() { console.log( "something went wrong!" ) }) ;
+	  .then((result)=>{console.log("yeaaaaa Affected Rows:");console.log(result)} )
+	  .catch(function(error) { console.log( "something went wrong:" ); console.log( error.code )}) ;
 	  var i;
 	  for (i=1; i < req.body.stocks.length; i++) {
 		  sql = "INSERT INTO ticker VALUES (?,?,?,?);";
@@ -191,7 +190,7 @@ app.post('/admin', roleAdmin, function(req,res){
 		  console.log(sql);
 		  mySqlPromise(sql,adapters)
 		  .then((result)=>{console.log("Ticker Affected Rows:");console.log(result.affectedRows)},
-				(error)=>{console.log("Ticker oooops");console.log(error)})
+				(error)=>{console.log("Ticker oooops");console.log(error.code)})
 		  .catch(function() { console.log( "Ticker something went wrong!" ) }) ;
 	  }
 	  
@@ -242,7 +241,11 @@ function mySqlPromise(sql,adapters) {
  *
 */
 	return new Promise(function(resolve,reject) {
-		adapters.dbconnection.query(sql, (error, results, fields) => {resolve(results);reject(error)} )
+		adapters.dbconnection.query(sql, (error, results, fields) => 
+		{
+			if (error) return reject(error);
+			resolve(results);
+		} )
 	}) 
 }
 
