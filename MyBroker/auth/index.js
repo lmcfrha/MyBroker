@@ -173,8 +173,28 @@ app.post('/admin', roleAdmin, function(req,res){
 	  console.log(req.body.stocks);
 	  console.log(req.body.stocks[0].Ticker);  
 	  console.log(req.body.stocks.length);
+	  
 	  // Update the DB: Tickers, Profiles
 	  // Add new tickers to ticker feed
+	  var sql = "INSERT INTO profile VALUES (?,?);";
+	  var inserts = [req.body.name,req.body.risk];	
+	  sql = mysql.format(sql,inserts);
+	  mySqlPromise(sql,adapters)
+	  .then((result)=>{console.log("yeaaaaa Affected Rows:");console.log(result.affectedRows)},
+			(error)=>{console.log("oooops");console.log(error)})
+	  .catch(function() { console.log( "something went wrong!" ) }) ;
+	  var i;
+	  for (i=1; i < req.body.stocks.length; i++) {
+		  sql = "INSERT INTO ticker VALUES (?,?,?,?);";
+		  inserts = [req.body.stocks[i].Ticker, req.body.stocks[i]['Target %'], req.body.stocks[i]['Exch.'], req.body.name];
+		  sql = mysql.format(sql,inserts);
+		  console.log(sql);
+		  mySqlPromise(sql,adapters)
+		  .then((result)=>{console.log("Ticker Affected Rows:");console.log(result.affectedRows)},
+				(error)=>{console.log("Ticker oooops");console.log(error)})
+		  .catch(function() { console.log( "Ticker something went wrong!" ) }) ;
+	  }
+	  
 	  
 	  res.json(req.body);
 });
@@ -211,6 +231,21 @@ app.post('/login', function(req, res){
     }
   });
 });
+
+/* Promise for DB operations */
+function mySqlPromise(sql,adapters) {
+/*	This function should be called to obtain a promise for the sql query arg.
+ *  The sql query should be prepared as follows (example insert statement):
+ *  var sql = "INSERT INTO user values (?,?,?,?,?,?,?,?,NOW());"
+ *	var inserts = [u,f,l,salt,hash,e,'S','T'];
+ *	sql = mysql.format(sql,inserts);
+ *
+*/
+	return new Promise(function(resolve,reject) {
+		adapters.dbconnection.query(sql, (error, results, fields) => {resolve(results);reject(error)} )
+	}) 
+}
+
 
 /* istanbul ignore next */
 if (!module.parent) {
