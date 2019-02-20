@@ -8,6 +8,7 @@
 
 /* Global vars */
 adapters = require('./adapters')
+tickerTape = {};
 
 /* Module vars */
 var express = require('express')

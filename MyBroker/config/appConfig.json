@@ -20,22 +20,11 @@
 	  "ticker": "SELECT * FROM `ticker`"
   },
 
-  "login-portal": {
-    "path": "/login",
-    "enable-http": true,
-    "http-port": "8031",
-    "enable-https": false,
-    "https-port": "8444",
-    "server-certificate": "./config/certs/server.crt",
-    "server-key": "./config/certs/server.key",
-    "ca-certificate": "./config/certs/root.crt",
-    "intermediate-certificate": "./config/certs/intermediate.crt",
-    "send-error-descriptions": true,
-    "auth_code_scope": "SES_GENERIC_DEVICE_SERVICE_SCOPE",
-    "use-html": true,
-    "test-ua": "",
-    "use-lab-iam": true
+  "financeapi": {
+	  "endpoint": "https://www.alphavantage.co/",
+	  "apikey": "MCAF9B429I44328U",
+	  "refresh": 10000
   },
-
+  
   "localization": "US"
 }
