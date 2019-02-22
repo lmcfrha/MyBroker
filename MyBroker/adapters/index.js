@@ -227,7 +227,7 @@ const getQuoteList = (dbCon, tickerTable, symbolCol, exchCol) => new Promise( (r
 	    	 reject(err);
 	    } else {
 	    	resolve(results);
-	    	console.log(results[3].symbol);
+//	    	console.log(results[3].symbol);
 	    }
     })
    });
@@ -247,7 +247,7 @@ function queryQuote(dbCon, tickerTable, symbolCol, exchCol) {
 	    	 console.log ('...go troubleshoot yourself.');
 	    } else {
 	    	tickerTape = results;
-	    	console.log(tickerTape[4].symbol);
+//	    	console.log(tickerTape[4].symbol);
 	    }
 	   });	 
      
