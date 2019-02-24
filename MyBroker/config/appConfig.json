@@ -21,7 +21,7 @@
   },
 
   "financeapi": {
-	  "endpoint": "https://www.alphavantage.co/",
+	  "endpoint": "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&apikey=MCAF9B429I44328U&symbol=",
 	  "apikey": "MCAF9B429I44328U",
 	  "refresh": 10000
   },

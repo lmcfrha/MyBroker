@@ -218,8 +218,13 @@ exports.dbconnection=dbconnection;
  *  Alphavantage finance adapter 
  * 
  */
-const config_alphavantage = require('../config/appConfig.json')['financeapi']
-const getQuoteList = (dbCon, tickerTable, symbolCol, exchCol) => new Promise( (resolve, reject) => {
+const config_financeapi = require('../config/appConfig.json')['financeapi'];
+var reqPromise = require('request-promise-native');
+var reqPromise1 = require('request-promise-native');
+
+
+const getQuoteListP = (dbCon, tickerTable, symbolCol, exchCol) => new Promise( (resolve, reject) => {
+	console.log("dans getQuoteList");
 	dbCon.query("SELECT DISTINCT "+symbolCol+", "+exchCol+" FROM "+tickerTable, function (err, results) {
 	    if (err) {
 	    	 console.error('Error getting tickers from table: ' + err.message);
@@ -227,15 +232,45 @@ const getQuoteList = (dbCon, tickerTable, symbolCol, exchCol) => new Promise( (r
 	    	 reject(err);
 	    } else {
 	    	resolve(results);
-//	    	console.log(results[3].symbol);
+	    	console.log(results);
 	    }
     })
    });
-function quotesTape(dbCon, tickerTable, symbolCol, exchCol) {
-	getQuoteList(dbCon, tickerTable, symbolCol, exchCol)
-	.then(function(result) {console.log(result)}, function(err) {console.log(err)})
+
+
+function getQuotesP(quotes) {
+	promiseQuoteArray = quotes.map( (quote) => {
+		var url = `${config_financeapi.endpoint}`+quote.exchange+":"+quote.symbol;
+		console.log(url);
+		var reqPromise = require('request-promise-native');
+		return reqPromise(url);
+	} );
+	var bigPromise = Promise.all(promiseQuoteArray);
+	return bigPromise;
 }
-var interval = setInterval(quotesTape,`${config_alphavantage.refresh}`,dbconnection,"ticker","symbol","exchange");
+
+function getQuotes(quoteList) {
+	
+	
+//	console.log(quoteList.length);
+//	console.log(quoteList[0].symbol);
+//	console.log(quoteList[1].exchange);	
+	return new Promise( (res,fail) => { res("resolved")});
+}
+
+function quotesTapeP(dbCon, tickerTable, symbolCol, exchCol) {
+	getQuoteListP(dbCon, tickerTable, symbolCol, exchCol)
+	.then ( (quotes) => {return getQuotesP(quotes)} )
+	.then ( (quotes) => {console.log(quotes);},
+	        (reason) => {console.log(reason);})
+	.catch (function(err) {console.log(err)});
+}
+
+
+
+//var delay = setTimeout(quotesTape,`${config_financeapi.refresh}`,dbconnection,"ticker","symbol","exchange");
+
+var interval = setInterval(quotesTapeP,`${config_financeapi.refresh}`,dbconnection,"ticker","symbol","exchange");
 
 function queryQuote(dbCon, tickerTable, symbolCol, exchCol) {
 	dbCon.query("SELECT DISTINCT "+symbolCol+", "+exchCol+" FROM "+tickerTable, function (err, results) {
@@ -252,4 +287,3 @@ function queryQuote(dbCon, tickerTable, symbolCol, exchCol) {
 	   });	 
      
 }
-var interval = setInterval(queryQuote,`${config_alphavantage.refresh}`,dbconnection,"ticker","symbol","exchange");

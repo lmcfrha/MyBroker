@@ -140,9 +140,11 @@ app.get('/admin', roleAdmin, function(req, res){
 	  res.render('admin/adminconsole');
 });
 app.post('/admin', roleAdmin, function(req,res){
-  
+      // Called when a (new) profile is Saved.
 	  // Update the DB: Tickers, Profiles
 	  // Add new tickers to ticker feed
+	
+	// Save the new profile in the profile table:
 	  var sql = "INSERT INTO profile VALUES (?,?);";
 	  var inserts = [req.body.name,req.body.risk];	
 	  sql = mysql.format(sql,inserts);
@@ -150,6 +152,8 @@ app.post('/admin', roleAdmin, function(req,res){
 	  mySqlPromise(sql,adapters)
 	  .then((result)=>{console.log("yeaaaaa Affected Rows:");console.log(result)} )
 	  .catch(function(error) { console.log( "something went wrong:" ); console.log( error.code )}) ;
+    
+	// Save new symbols in the ticker table:
 	  var i;
 	  for (i=1; i < req.body.stocks.length; i++) {
 		  sql = "INSERT INTO ticker VALUES (?,?,?,?);";
