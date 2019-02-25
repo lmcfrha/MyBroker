@@ -219,8 +219,9 @@ exports.dbconnection=dbconnection;
  * 
  */
 const config_financeapi = require('../config/appConfig.json')['financeapi'];
-var reqPromise = require('request-promise-native');
-var reqPromise1 = require('request-promise-native');
+const reqPromise = require('request-promise-native');
+const cheerio = require('cheerio') 
+
 
 
 const getQuoteListP = (dbCon, tickerTable, symbolCol, exchCol) => new Promise( (resolve, reject) => {
@@ -240,50 +241,31 @@ const getQuoteListP = (dbCon, tickerTable, symbolCol, exchCol) => new Promise( (
 
 function getQuotesP(quotes) {
 	promiseQuoteArray = quotes.map( (quote) => {
-		var url = `${config_financeapi.endpoint}`+quote.exchange+":"+quote.symbol;
-		console.log(url);
-		var reqPromise = require('request-promise-native');
+		var url = `${config_financeapi.endpoint}`+quote.symbol;
+//		console.log(url);
+//		var reqPromise = require('request-promise-native');
 		return reqPromise(url);
 	} );
 	var bigPromise = Promise.all(promiseQuoteArray);
 	return bigPromise;
 }
 
-function getQuotes(quoteList) {
-	
-	
-//	console.log(quoteList.length);
-//	console.log(quoteList[0].symbol);
-//	console.log(quoteList[1].exchange);	
-	return new Promise( (res,fail) => { res("resolved")});
-}
 
 function quotesTapeP(dbCon, tickerTable, symbolCol, exchCol) {
 	getQuoteListP(dbCon, tickerTable, symbolCol, exchCol)
 	.then ( (quotes) => {return getQuotesP(quotes)} )
-	.then ( (quotes) => {console.log(quotes);},
+	.then ( (quotes) => {
+		var i;
+		for (i = 0; i < quotes.length; i++) { 
+			const $ = cheerio.load(quotes[i])
+//			console.log(quotes[i]);
+			console.log($(".quote-ticker.tickerLarge").html());
+			console.log($(".quote-price.priceLarge span").html());
+		}
+		console.log(quotes.length);},
 	        (reason) => {console.log(reason);})
 	.catch (function(err) {console.log(err)});
 }
 
-
-
-//var delay = setTimeout(quotesTape,`${config_financeapi.refresh}`,dbconnection,"ticker","symbol","exchange");
-
 var interval = setInterval(quotesTapeP,`${config_financeapi.refresh}`,dbconnection,"ticker","symbol","exchange");
 
-function queryQuote(dbCon, tickerTable, symbolCol, exchCol) {
-	dbCon.query("SELECT DISTINCT "+symbolCol+", "+exchCol+" FROM "+tickerTable, function (err, results) {
-		  // error will be an Error if one occurred during the query
-		  // results will contain the results of the query
-		  // fields will contain information about the returned results fields (if any)
-	    if (err) {
-	    	 console.error('Error getting tickers from table: ' + err.message);
-	    	 console.log ('...go troubleshoot yourself.');
-	    } else {
-	    	tickerTape = results;
-//	    	console.log(tickerTape[4].symbol);
-	    }
-	   });	 
-     
-}
