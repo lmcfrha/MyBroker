@@ -40,7 +40,8 @@
       
       $("#saveProfile").click(function(event){ saveProfileTable() });
 
-
+// The SSE client part, listening to the stock quotes from the server
+//     to update the table; if the ticker is not there, fetch it "manually"
       var tickerFeed=new EventSource('feed/tickers');
       tickerFeed.onmessage=function(m) {
            var list = JSON.parse(m.data);
@@ -48,7 +49,13 @@
            $('#profileTickers tr').each(function() 
            		{
            		var ticker=$(this).find(".tickerSymbol").text();
+           		if (typeof list[ticker] === "undefined" || typeof ticker === "undefined") {
+    				if ( ticker !== "") console.log(ticker +" is undefined");
+                }
+                else
+                {
                 $(this).find(".stockPrice").html(list[ticker]);
+                }
  				});
       };
 
