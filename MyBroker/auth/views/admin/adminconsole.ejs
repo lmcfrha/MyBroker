@@ -45,7 +45,6 @@
       var tickerFeed=new EventSource('feed/tickers');
       tickerFeed.onmessage=function(m) {
            var list = JSON.parse(m.data);
-           console.log("hello.......");
            $('#profileTickers tr').each(function() 
            		{
            		var currentRow=$(this);

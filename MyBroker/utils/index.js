@@ -21,7 +21,6 @@ app.use(express.urlencoded({ extended: false }));
 
 app.get('/stock/:symbol', function(req, res){
 	var quotes = [{ 'symbol': req.params.symbol }];
-	console.log(quotes);
 	getQuotesP(quotes)
 	.then( (quotes) => {
 			const $ = cheerio.load(quotes[0])
