@@ -222,10 +222,9 @@ const config_financeapi = require('../config/appConfig.json')['financeapi'];
 const reqPromise = require('request-promise-native');
 const cheerio = require('cheerio') 
 
-
+quotesTape = {};
 
 const getQuoteListP = (dbCon, tickerTable, symbolCol, exchCol) => new Promise( (resolve, reject) => {
-	console.log("dans getQuoteList");
 	dbCon.query("SELECT DISTINCT "+symbolCol+", "+exchCol+" FROM "+tickerTable, function (err, results) {
 	    if (err) {
 	    	 console.error('Error getting tickers from table: ' + err.message);
@@ -233,7 +232,6 @@ const getQuoteListP = (dbCon, tickerTable, symbolCol, exchCol) => new Promise( (
 	    	 reject(err);
 	    } else {
 	    	resolve(results);
-	    	console.log(results);
 	    }
     })
    });
@@ -258,11 +256,9 @@ function quotesTapeP(dbCon, tickerTable, symbolCol, exchCol) {
 		var i;
 		for (i = 0; i < quotes.length; i++) { 
 			const $ = cheerio.load(quotes[i])
-//			console.log(quotes[i]);
-			console.log($(".quote-ticker.tickerLarge").html());
-			console.log($(".quote-price.priceLarge span").html());
+			quotesTape[$(".quote-ticker.tickerLarge").html()]=$(".quote-price.priceLarge span").html();
 		}
-		console.log(quotes.length);},
+		console.log(JSON.stringify(quotesTape))},
 	        (reason) => {console.log(reason);})
 	.catch (function(err) {console.log(err)});
 }

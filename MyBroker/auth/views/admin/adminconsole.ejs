@@ -7,7 +7,6 @@
     <!-- html to json plugin: https://www.npmjs.com/package/table-to-json -->
     <script src="/scripts/jquery.tabletojson.js"></script>
     <script> 
-    
     <!-- JQuery section -->
     $(document).ready(function(){
 
@@ -40,8 +39,21 @@
       }
       
       $("#saveProfile").click(function(event){ saveProfileTable() });
-  	
 
+
+      var tickerFeed=new EventSource('feed/tickers');
+      tickerFeed.onmessage=function(m) {
+           var list = JSON.parse(m.data);
+           console.log("hello.......");
+           $('#profileTickers tr').each(function() 
+           		{
+           		var ticker=$(this).find(".tickerSymbol").text();
+                $(this).find(".stockPrice").html(list[ticker]);
+ 				});
+      };
+
+  
+     
 
 		});
     </script>
@@ -105,7 +117,7 @@
               <td>Cash</td>
               <td>N/A</td>
               <td id="targetCash">100</td>
-              <td><br>
+              <td>
               </td>
             </tr>
           </tbody>
@@ -163,7 +175,9 @@ type="submit"> </div>
       function addTickerRow(t){
         var table = document.getElementById(t);
         var row = table.insertRow();
-        row.insertCell().setAttribute('contenteditable','true');
+        symbol=row.insertCell();
+        symbol.setAttribute('contenteditable','true');
+        symbol.setAttribute('class','tickerSymbol');
         var exchange=row.insertCell();
         exchange.setAttribute('contenteditable','true');
         exchange.innerHTML="TSX";
@@ -172,7 +186,9 @@ type="submit"> </div>
         target.innerHTML=0;
         target.setAttribute('class','target');
         target.setAttribute('onblur','recalculate(this)');
-        row.insertCell();
+        var stockPrice=row.insertCell();
+        stockPrice.setAttribute('class','stockPrice');
+        
        
       }
       

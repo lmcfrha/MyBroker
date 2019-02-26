@@ -10,6 +10,7 @@ var mysql      = require('mysql');
 /* Session store business... */
 var MySQLStore = require('express-mysql-session')(session);
 const config_mysql = require('../config/appConfig.json')['mysql']
+const config_financeapi = require('../config/appConfig.json')['financeapi'];
 var options = {
 	  host     : `${config_mysql.host}`,
 	  port     : `${config_mysql.port}`,
@@ -65,7 +66,7 @@ var createUser = (u,f,l,e,s,t) => { return function (err, pass, salt, hash) {
 		  if (error) throw error;
 		  // ...
 		});
-	  console.log("impressive or not??");
+	  console.log("user insert order");
 	};	  }
 
 
@@ -202,6 +203,26 @@ app.post('/login', function(req, res){
     }
   });
 });
+
+app.get('/feed/tickers', function(req, res){
+	  req.socket.setTimeout(Number.MAX_SAFE_INTEGER);
+	  var messageCount = 0;
+	  setInterval( () => {
+		    messageCount++; // Increment our message count
+
+		    res.write('id: ' + messageCount + '\n');
+		    res.write("data: " + JSON.stringify(quotesTape) + '\n\n'); // Note the extra newline
+	  }, `${config_financeapi.refresh}`)
+	 //send headers for event-stream connection
+	  res.writeHead(200, {
+	    'Content-Type': 'text/event-stream',
+	    'Cache-Control': 'no-cache',
+	    'Connection': 'keep-alive'
+	  });
+	  res.write('\n');
+	
+});
+
 
 /* Promise for DB operations */
 function mySqlPromise(sql,adapters) {
