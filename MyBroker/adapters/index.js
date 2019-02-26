@@ -220,11 +220,11 @@ exports.dbconnection=dbconnection;
  */
 const config_financeapi = require('../config/appConfig.json')['financeapi'];
 const reqPromise = require('request-promise-native');
-const cheerio = require('cheerio') 
+cheerio = require('cheerio') 
 
 quotesTape = {};
 
-const getQuoteListP = (dbCon, tickerTable, symbolCol, exchCol) => new Promise( (resolve, reject) => {
+getQuoteListP = (dbCon, tickerTable, symbolCol, exchCol) => new Promise( (resolve, reject) => {
 	dbCon.query("SELECT DISTINCT "+symbolCol+", "+exchCol+" FROM "+tickerTable, function (err, results) {
 	    if (err) {
 	    	 console.error('Error getting tickers from table: ' + err.message);
@@ -237,10 +237,9 @@ const getQuoteListP = (dbCon, tickerTable, symbolCol, exchCol) => new Promise( (
    });
 
 
-function getQuotesP(quotes) {
+getQuotesP = (quotes) => {
 	promiseQuoteArray = quotes.map( (quote) => {
 		var url = `${config_financeapi.endpoint}`+quote.symbol;
-//		console.log(url);
 //		var reqPromise = require('request-promise-native');
 		return reqPromise(url);
 	} );
@@ -257,7 +256,7 @@ function quotesTapeP(dbCon, tickerTable, symbolCol, exchCol) {
 		for (i = 0; i < quotes.length; i++) { 
 			const $ = cheerio.load(quotes[i])
 			quotesTape[$(".quote-ticker.tickerLarge").html()]=$(".quote-price.priceLarge span").html();
-		}
+		    }
 		console.log(JSON.stringify(quotesTape))},
 	        (reason) => {console.log(reason);})
 	.catch (function(err) {console.log(err)});

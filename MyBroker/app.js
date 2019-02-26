@@ -16,7 +16,8 @@ var express = require('express')
   , user = require('./routes/user')
   , http = require('http')
   , path = require('path')
-  , auth = require('./auth');
+  , auth = require('./auth')
+  , utils = require('./utils');
 
 
 
@@ -37,8 +38,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
+
+//mount the utils sub-app (a bunch of utility API) 
+app.use('/mybroker/utils/', utils);
 //mount the auth sub-app on /mybroker
 app.use('/mybroker/', auth);
+
 
 app.get('/', routes.index);
 app.get('/users', user.list);

@@ -3,7 +3,7 @@
   <head>
     <meta http-equiv="content-type" content="text/html; charset=windows-1252">
     <title>MyBrokerAdminConsole</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <!-- html to json plugin: https://www.npmjs.com/package/table-to-json -->
     <script src="/scripts/jquery.tabletojson.js"></script>
     <script> 
@@ -41,25 +41,21 @@
       $("#saveProfile").click(function(event){ saveProfileTable() });
 
 // The SSE client part, listening to the stock quotes from the server
-// to update the table; if the ticker is not there, fetch it "manually"
+//     to update the table; if the ticker is not there, fetch it "manually"
       var tickerFeed=new EventSource('feed/tickers');
       tickerFeed.onmessage=function(m) {
            var list = JSON.parse(m.data);
            console.log("hello.......");
            $('#profileTickers tr').each(function() 
            		{
-           		var currentRow=$(this);
-           		var ticker=currentRow.find(".tickerSymbol").text();
-// If ticker is not found in feed from server, 
-// need to fetch it by hand from the util API:
-           		if (typeof list[ticker] === "undefined" && ticker !== "") {
-    				console.log(ticker +" is new - requesting the stock price");
-    				$.when( $.ajax({ url: `utils/stock/${ticker}` }) )
-                     .then(function(response, status, xhr){currentRow.find(".stockPrice").html(response)});
-    				
+           		var ticker=$(this).find(".tickerSymbol").text();
+           		if (typeof list[ticker] === "undefined" || typeof ticker === "undefined") {
+    				if ( ticker !== "") console.log(ticker +" is undefined");
                 }
-                else currentRow.find(".stockPrice").html(list[ticker]);
-               
+                else
+                {
+                $(this).find(".stockPrice").html(list[ticker]);
+                }
  				});
       };
 
