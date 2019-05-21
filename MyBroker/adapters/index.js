@@ -224,6 +224,9 @@ cheerio = require('cheerio')
 
 quotesTape = {};
 
+/**
+ * Function returns a Promise to retrieve the list is stock symbols from the database
+ */
 getQuoteListP = (dbCon, tickerTable, symbolCol, exchCol) => new Promise( (resolve, reject) => {
 	dbCon.query("SELECT DISTINCT "+symbolCol+", "+exchCol+" FROM "+tickerTable, function (err, results) {
 	    if (err) {
@@ -236,7 +239,9 @@ getQuoteListP = (dbCon, tickerTable, symbolCol, exchCol) => new Promise( (resolv
     })
    });
 
-
+/**
+ * Function retunes a Promise (all) to get all the current stock prices 
+ */
 getQuotesP = (quotes) => {
 	promiseQuoteArray = quotes.map( (quote) => {
 		var url = `${config_financeapi.endpoint}`+quote.symbol;
@@ -247,7 +252,12 @@ getQuotesP = (quotes) => {
 	return bigPromise;
 }
 
-
+/**
+ * Function executes the promise chain:
+ * - getQuoteListP: retrieve all the tickers from the DB
+ * - get all the values from a Stock service API
+ * - build the JSon object with all the stock quotes 
+ */
 function quotesTapeP(dbCon, tickerTable, symbolCol, exchCol) {
 	getQuoteListP(dbCon, tickerTable, symbolCol, exchCol)
 	.then ( (quotes) => {return getQuotesP(quotes)} )
