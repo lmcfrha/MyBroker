@@ -5,6 +5,7 @@
         symbol=row.insertCell();
         symbol.setAttribute('contenteditable','true');
         symbol.setAttribute('class','tickerSymbol');
+        symbol.setAttribute('onfocus',`cleanupStockPrice(\"${t}_price_${row.rowIndex}\")`);
         var exchange=row.insertCell();
         exchange.setAttribute('contenteditable','true');
         exchange.innerHTML="TSX";
@@ -14,7 +15,9 @@
         target.setAttribute('class',tclass);
         target.setAttribute('onblur','recalculate("'+tc+'","'+tclass+'")');
         var stockPrice=row.insertCell();
-        stockPrice.setAttribute('class','stockPrice');       
+        stockPrice.setAttribute('class','stockPrice');  
+        stockPrice.setAttribute('id',`${t}_price_${row.rowIndex}`);
+             
       }
       
       function loadTickerRows(tickertable,tickerlist){
@@ -25,6 +28,7 @@
           symbol=row.insertCell();
           symbol.setAttribute('contenteditable','true');
           symbol.setAttribute('class','tickerSymbol');
+          symbol.setAttribute('onfocus',`cleanupStockPrice(\"loadTable_price_${row.rowIndex}\")`);
           symbol.innerHTML=tickerlist[i].symbol;
           var exchange=row.insertCell();
           exchange.setAttribute('contenteditable','true');
@@ -35,7 +39,8 @@
           target.setAttribute('class','updateTargetClass');
           target.setAttribute('onblur','recalculate("updateTargetCash","updateTargetClass")');
           var stockPrice=row.insertCell();
-          stockPrice.setAttribute('class','stockPrice');
+          stockPrice.setAttribute('class','stockPrice'); /* stockPrice class used locate where to put the ticker value */
+          stockPrice.setAttribute('id',`loadTable_price_${row.rowIndex}`);
           recalculate('updateTargetCash','updateTargetClass');
         }      
       }
@@ -57,3 +62,9 @@
            alert(e);
         }
       }
+      
+      function cleanupStockPrice(id) {
+         console.log("Need to CLEAR: "+id);
+         document.getElementById(id).innerHTML="";
+      }   
+         

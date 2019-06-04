@@ -2,14 +2,14 @@
 // - no empty ticker cell
 // - no Unknown cell
 // - no duplicate ticker
-      function saveProfileTable() {
+      function saveProfileTable(tableselector) {
     <!-- This function turns the table into a JSON object and saves the new profile in the DB -->
         try {
-             var tableJson = $('#profileTickers').tableToJSON(
+             var tableJson = $(tableselector).tableToJSON(
                {
                  ignoreColumns: [3],
                  extractor : function (cellIndex, $cell) {
-                   if ($cell.text() == "" && cellIndex <3)
+                   if ($cell.text() == "")
                    {console.log($cell.text());
                     throw "anEmptyCell";}
                    else if ($cell.text() == "Unknown")
@@ -23,17 +23,27 @@
 			 var arrayLength = tableJson.length;
 			 var map = new Map();
     		 for (var i = 0; i < arrayLength; i++) {
+    		        console.log("Index i ="+i);console.log(tableJson[i].Ticker);
         		    if (map.has(tableJson[i].Ticker)) 
         		    	throw "duplicateSymbol"; 
         		    else 
-        		    	map.set(tableJson[i].Ticker, 'foo');
+        		    	map.set(tableJson[i].Ticker, tableJson[i].Ticker);
+        		    console.log(map.get(tableJson[i].Ticker));
     		 }
-             tableJson.name = newProfile.profileName;
-             tableJson.risk = newProfile.risk;
-             postNewProfile = { "name": newProfile.profileName, "risk":newProfile.risk, "stocks": tableJson}; 
+    		 if (tableselector === "#profileTickers") 
+    		   {  tableJson.name = newProfile.profileName;
+                  tableJson.risk = newProfile.risk;
+               }
+             else
+               {  tableJson.name = $("#updateProfileName").text();
+                  tableJson.risk = $("#updateProfileRisk").text();
+               }
+             postNewProfile = { "name": tableJson.name, "risk":tableJson.risk, "stocks": tableJson}; 
               console.log(postNewProfile);
-             $.when( $.ajax({ method: 'POST', url: 'admin/profile',  data: postNewProfile , datatype: 'json' }) )
-              .then(function(response, status, xhr)
+              
+             if (tableselector === "#profileTickers") {
+               $.when( $.ajax({ method: 'POST', url: 'admin/profile',  data: postNewProfile , datatype: 'json' }) )
+                .then(function(response, status, xhr)
                     { 
                       if (status == 'success') 
                          { console.log(response);
@@ -43,11 +53,38 @@
                            location.reload();
                            console.log('After saving new bringing the profile list to foreground');
                          }
-                      else throw "status"; });  
+                      else throw "status"; });
+             }
+             else {
+               $.when( $.ajax({ method: 'PUT', url: 'admin/profile',  data: postNewProfile , datatype: 'json' }) )
+                .then(function(response, status, xhr)
+                    { 
+                      if (status == 'success') 
+                         { console.log(response);
+                           listProfiles();
+                           newProfileDiv.style.zIndex=-1;
+                           newProfileListDiv.style.zIndex=10;
+                           location.reload();
+                           console.log('After saving new bringing the profile list to foreground');
+                         }
+                      else throw "status"; });
+             }
         }
         catch(e) {
           alert(e);
         }
       }
       
-      $("#saveProfile").click(function(event){ saveProfileTable() });
+      function cancel() {
+                           listProfiles();
+                           newProfileDiv.style.zIndex=-1;
+                           newProfileListDiv.style.zIndex=10;
+                           location.reload();
+      }
+      
+      $("#saveProfile").click(function(event){ saveProfileTable('#profileTickers') });
+      $("#saveUpdatedProfile").click(function(event){ saveProfileTable('#updateProfileTickers') });
+      
+      
+ // Update a profile:
+      

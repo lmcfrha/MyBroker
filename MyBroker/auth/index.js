@@ -153,6 +153,27 @@ app.get('/admin/profile', roleAdmin, function(req, res){
 	  .then((result)=>{console.log("Profile definition:");console.log(result);res.send(result);} )
 	  .catch(function(error) { console.log( "something went wrong:" ); console.log( error.code )}) ;
 });
+app.put('/admin/profile', roleAdmin, function(req, res){
+    // Called when a profile is Updated.
+	  // Insert or update the tickers
+	  // Tickers not replaced are deleted tickers: set 0 as target. 
+	  // They will be removed at the next portfolio rebalance.
+
+	// Update in the ticker table:
+	  var i;
+	  for (i=1; i < req.body.stocks.length; i++) {
+		  sql = "INSERT INTO ticker (symbol,target,exchange,profilename) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE target = ?;";
+		  inserts = [req.body.stocks[i].Ticker, req.body.stocks[i]['Target %'], req.body.stocks[i]['Exch.'], req.body.name, req.body.stocks[i]['Target %']];
+		  sql = mysql.format(sql,inserts);
+		  console.log(sql);
+		  mySqlPromise(sql,adapters)
+		  .then((result)=>{console.log("Ticker Affected Rows:");console.log(result.affectedRows)},
+				(error)=>{console.log("Ticker oooops");console.log(error.code)})
+		  .catch(function() { console.log( "Ticker something went wrong!" ) }) ;
+	  }	  
+	  res.json(req.body);
+	  // res.redirect('../');
+});
 
 app.get('/admin', roleAdmin, function(req, res){
 	  res.render('admin/adminconsole');

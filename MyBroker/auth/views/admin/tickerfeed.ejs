@@ -3,7 +3,7 @@
       var tickerFeed=new EventSource('feed/tickers');
       tickerFeed.onmessage=function(m) {
            var list = JSON.parse(m.data);
-           $('#profileTickers tr').each(function() 
+           $('#profileTickers tr, #updateProfileTickers tr').each(function() 
            		{
            		var currentRow=$(this);
            		var ticker=currentRow.find(".tickerSymbol").text();

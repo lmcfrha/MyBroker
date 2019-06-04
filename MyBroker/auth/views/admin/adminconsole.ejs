@@ -38,11 +38,12 @@ $(document).ready(function(){ });
 
 <% include tableProfiles %>   
 
-        </div>
+      </div>
         <button id="createProfile" onclick="createProfile()"> New... </button>
         <input name="Modify" value=" Edit..." form="ProfileCommand" type="submit">
         <input name="Delete" value=" Delete " form="ProfileCommand" type="submit">
       </div>
+      
       <div id="newProfile" class="newProfile">
         <p style="text-align: center;">DEFINE NEW PROFILE</p>
 
@@ -50,18 +51,18 @@ $(document).ready(function(){ });
 
         <button id="addTicker" onclick="addTickerRow('profileTickers','targetCash','targetClass')"> Add </button>
         <button id="saveProfile"> Save </button> 
-        <input name="Cancel" value=" Cancel " form="ProfileCommand" class="cancelNewProfile" type="submit">
+        <button id="cancel" onclick="cancel()"> Cancel </button>
       </div>
       
       <div id="updateProfile" class="newProfile">
         <p style="text-align: center;">UPDATE PROFILE <span id="updateProfileName" style = "color:white;font-weight:bold;text-transform:uppercase;"></span> 
-        <span id="updateProfileRisk" style = "color:white;font-weight:bold;"></span></p>
+        (<span id="updateProfileRisk" style = "color:white;font-weight:bold;"></span>)</p>
 
 <% include updateProfile %>   
 
         <button id="insertTicker" onclick="addTickerRow('updateProfileTickers','updateTargetCash','updateTargetClass')"> Add </button>
         <button id="saveUpdatedProfile"> Save </button> 
-        <input name="Cancel" value=" Cancel " form="ProfileCommand" class="cancelNewProfile" type="submit">
+        <button id="cancel" onclick="cancel()"> Cancel </button>
       </div>
       <div id="newTicker" class="newTicker">
         <p style="text-align: center;">ADD A NEW SYMBOL TO THE PROFILE </p>

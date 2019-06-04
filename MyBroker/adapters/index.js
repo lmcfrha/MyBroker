@@ -263,6 +263,9 @@ function quotesTapeP(dbCon, tickerTable, symbolCol, exchCol) {
 	.then ( (quotes) => {return getQuotesP(quotes)} )
 	.then ( (quotes) => {
 		var i;
+/*
+ * Extract from the yahoo response, the stock quote using the cheerio
+ */
 		for (i = 0; i < quotes.length; i++) { 
 			const $ = cheerio.load(quotes[i])
 			quotesTape[$(".quote-ticker.tickerLarge").html()]=$(".quote-price.priceLarge span").html();
