@@ -1,0 +1,33 @@
+//  Fetches the profile data, for editing. The profile is returned from the GET /admin/profile. Then the 
+    function editProfile(profilename) {
+    <!-- This function turns the table into a JSON object and saves the new profile in the DB -->
+        try {
+             $.when( $.ajax({ method: 'GET', url: 'admin/profile', data: {name: profilename}, datatype: 'json' }) )
+              .then(editProfileTable);
+        }
+        catch(e) {
+          alert(e);
+        }        
+      }
+      function editProfileTable(response, status, xhr)
+        { 
+           if (status == 'success') 
+              { console.log(response);
+                updateProfile(response[0].profilename,response[0].risk);
+                loadTickerRows('updateProfileTickers',response);
+                var arrayLength = response.length;
+                var table = document.getElementById('profilesTable');
+    		    for (var i = 0; i < arrayLength; i++) {
+                   var row = table.insertRow();
+                   var profileName=row.insertCell();
+                   profileName.innerHTML=response[i].profilename;
+                   var profileRisk=row.insertCell();
+                   profileRisk.innerHTML=response[i].risk;
+                   var profileEdit=row.insertCell();                   
+                   profileEdit.innerHTML='<button id="editProfile" onclick="editProfile(response[i].profilename)"><img src="https://img.icons8.com/ultraviolet/48/000000/pencil.png" alt="Edit"></button>';
+                   var profileDelete=row.insertCell(); 
+                   profileDelete.innerHTML='<img src="https://img.icons8.com/color/48/000000/trash.png" alt="Delete">';         		     
+        		}
+              }
+           else throw "status";
+        }

@@ -136,11 +136,28 @@ app.get('/register', function(req, res){
 	  res.render('register');
 });
 
+app.get('/admin/profiles', roleAdmin, function(req, res){
+    // Retrieve profiles
+	  var sql = "SELECT * FROM profile;";
+	  console.log(sql);
+	  mySqlPromise(sql,adapters)
+	  .then((result)=>{console.log("Profile list:");console.log(result);res.send(result);} )
+	  .catch(function(error) { console.log( "something went wrong:" ); console.log( error.code )}) ;
+});
+
+app.get('/admin/profile', roleAdmin, function(req, res){
+    // Retrieve profiles
+	  var sql = "SELECT * FROM ticker, profile where profile.profilename='"+req.query.name+"' and ticker.profilename='"+req.query.name+"'";
+	  console.log(sql);
+	  mySqlPromise(sql,adapters)
+	  .then((result)=>{console.log("Profile definition:");console.log(result);res.send(result);} )
+	  .catch(function(error) { console.log( "something went wrong:" ); console.log( error.code )}) ;
+});
 
 app.get('/admin', roleAdmin, function(req, res){
 	  res.render('admin/adminconsole');
 });
-app.post('/admin', roleAdmin, function(req,res){
+app.post('/admin/profile', roleAdmin, function(req,res){
       // Called when a (new) profile is Saved.
 	  // Update the DB: Tickers, Profiles
 	  // Add new tickers to ticker feed
@@ -165,10 +182,9 @@ app.post('/admin', roleAdmin, function(req,res){
 		  .then((result)=>{console.log("Ticker Affected Rows:");console.log(result.affectedRows)},
 				(error)=>{console.log("Ticker oooops");console.log(error.code)})
 		  .catch(function() { console.log( "Ticker something went wrong!" ) }) ;
-	  }
-	  
-	  
+	  }	  
 	  res.json(req.body);
+	  // res.redirect('../');
 });
 
 app.post('/register', function(req, res){

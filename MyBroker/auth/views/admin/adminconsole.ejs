@@ -2,92 +2,27 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=windows-1252">
+
     <title>MyBrokerAdminConsole</title>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
     <!-- html to json plugin: https://www.npmjs.com/package/table-to-json -->
     <script src="/scripts/jquery.tabletojson.js"></script>
-    <script> 
-    <!-- JQuery section -->
-    $(document).ready(function(){
 
-// When SAVE profile is pressed, check that there are 
-// - no empty ticker cell
-// - no Unknown cell
-// - no duplicate ticker
-      function saveProfileTable() {
-    <!-- This function turns the table into a JSON object and saves the new profile in the DB -->
-        try {
-             var tableJson = $('#profileTickers').tableToJSON(
-               {
-                 ignoreColumns: [3],
-                 extractor : function (cellIndex, $cell) {
-                   if ($cell.text() == "" && cellIndex <3)
-                   {console.log($cell.text());
-                    throw "anEmptyCell";}
-                   else if ($cell.text() == "Unknown")
-                    throw "anUnknownSymbol";
-                   else
-                   {return $cell.text()}
-                 }
-               }
-               );
-             // Check if there are duplicate symbols
-			 var arrayLength = tableJson.length;
-			 var map = new Map();
-    		 for (var i = 0; i < arrayLength; i++) {
-        		    if (map.has(tableJson[i].Ticker)) 
-        		    	throw "duplicateSymbol"; 
-        		    else 
-        		    	map.set(tableJson[i].Ticker, 'foo');
-    		 }
-             tableJson.name = newProfile.profileName;
-             tableJson.risk = newProfile.risk;
-             postNewProfile = { "name": newProfile.profileName, "risk":newProfile.risk, "stocks": tableJson}; 
-              console.log(postNewProfile);
-             $.when( $.ajax({ method: 'POST', data: postNewProfile , datatype: 'json' }) )
-              .then(function(response, status, xhr){console.log(response);});
-                 
-        }
-        catch(e) {
-          alert(e);
-        }
-      }
-      
-      $("#saveProfile").click(function(event){ saveProfileTable() });
+<script>    
+<!-- JQuery section -->
+$(document).ready(function(){ });
+</script>
+<!-- End JQuery section -->
 
-// The SSE client part, listening to the stock quotes from the server
-// to update the table; if the ticker is not there, fetch it "manually"
-      var tickerFeed=new EventSource('feed/tickers');
-      tickerFeed.onmessage=function(m) {
-           var list = JSON.parse(m.data);
-           $('#profileTickers tr').each(function() 
-           		{
-           		var currentRow=$(this);
-           		var ticker=currentRow.find(".tickerSymbol").text();
-// If ticker is not found in feed from server, 
-// need to fetch it by hand from the util API and then update table:
-           		if (typeof list[ticker] === "undefined" && ticker !== "") {
-    				console.log(ticker +" is new - requesting the stock price");
-    				$.when( $.ajax({ url: `utils/stock/${ticker}` }) )
-                     .then(function(response, status, xhr){currentRow.find(".stockPrice").html(response)});
-    				
-                }
-                else currentRow.find(".stockPrice").html(list[ticker]);
-               
- 				});
-      };
+<% include ../stylesheets/adminstyle %>
 
-  
-     
-
-		});
-    </script>
-    <!-- End JQuery section -->
-     
-    <% include ../stylesheets/adminstyle %>
   </head>
   <body>
     <div class="workspace">
+
+  <!-- AdminConsole layout -->
       <div class="topline">MY BROKER ADMIN CONSOLE</div>
       <div class="sidemenu" id="menuprincipal">
         <ul>
@@ -99,9 +34,10 @@
       </div>
       <div id="profileList" class="profileList">
         <p>PROFILE LIST </p>
-        <div style="overflow-x:auto;"> ... profile list content ...
-          <table id="profileListTable">
-          </table>
+        <div style="overflow-x:auto;">
+
+<% include tableProfiles %>   
+
         </div>
         <button id="createProfile" onclick="createProfile()"> New... </button>
         <input name="Modify" value=" Edit..." form="ProfileCommand" type="submit">
@@ -109,70 +45,39 @@
       </div>
       <div id="newProfile" class="newProfile">
         <p style="text-align: center;">DEFINE NEW PROFILE</p>
-        <table class="center">
-          <tbody>
-            <tr>
-              <td>Profile name:</td>
-              <td><input size="10" onchange="(function(t){newProfile.profileName=t;console.log(newProfile);})(this.value)"
 
-                  type="text"></td>
-              <td>Risk level:</td>
-              <td>
-                <select id="risktypes" onchange="(function(r){newProfile.risk=r;console.log(newProfile);})(this.value)">
-                  <option value="S">Speculation</option>
-                  <option value="H">Haut</option>
-                  <option value="M" selected="selected">Moyen</option>
-                  <option value="F">Faible</option>
-                  <option value="P">PouettePouette</option>
-                </select>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <p> </p>
-        <table id="profileTickers" class="fullwidth">
-          <tbody>
-            <tr>
-              <th>Ticker</th>
-              <th>Exch.</th>
-              <th>Target %</th>
-              <th>Current Value</th>
-            </tr>
-            <tr>
-              <td>Cash</td>
-              <td>N/A</td>
-              <td id="targetCash">100</td>
-              <td>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <div style="overflow-x:auto;"> ... profile content ...
-          <table id="profileTable">
-          </table>
-        </div>
-        <button id="addTicker" onclick="addTickerRow('profileTickers')"> Add </button>
-        <button id="saveProfile" onclick="saveProfileTable('profileTickers')">
-          Save </button> <input name="Cancel" value=" Cancel " form="ProfileCommand"
+<% include tablesNewProfile %>   
 
-class="cancelNewProfile" type="submit"> </div>
+        <button id="addTicker" onclick="addTickerRow('profileTickers','targetCash','targetClass')"> Add </button>
+        <button id="saveProfile"> Save </button> 
+        <input name="Cancel" value=" Cancel " form="ProfileCommand" class="cancelNewProfile" type="submit">
+      </div>
+      
+      <div id="updateProfile" class="newProfile">
+        <p style="text-align: center;">UPDATE PROFILE <span id="updateProfileName" style = "color:white;font-weight:bold;text-transform:uppercase;"></span> 
+        <span id="updateProfileRisk" style = "color:white;font-weight:bold;"></span></p>
+
+<% include updateProfile %>   
+
+        <button id="insertTicker" onclick="addTickerRow('updateProfileTickers','updateTargetCash','updateTargetClass')"> Add </button>
+        <button id="saveUpdatedProfile"> Save </button> 
+        <input name="Cancel" value=" Cancel " form="ProfileCommand" class="cancelNewProfile" type="submit">
+      </div>
       <div id="newTicker" class="newTicker">
         <p style="text-align: center;">ADD A NEW SYMBOL TO THE PROFILE </p>
-        <input name="Check" value=" Check " form="ProfileCommand" class="saveNewProfile"
-
-type="submit"> <input name="Save" value=" Save " form="ProfileCommand" class="saveNewProfile"
-
-type="submit"> <input name="Cancel" value=" Cancel " form="ProfileCommand" class="cancelNewProfile"
-
-type="submit"> </div>
+        <input name="Check" value=" Check " form="ProfileCommand" class="saveNewProfile" type="submit"> 
+        <input name="Save" value=" Save " form="ProfileCommand" class="saveNewProfile" type="submit"> 
+        <input name="Cancel" value=" Cancel " form="ProfileCommand" class="cancelNewProfile" type="submit">
+      </div>
     </div>
+    
     <script>
       /* Retrieve access to <div> elements for JavaScript control */
       const newProfileListDiv = document.querySelector("#profileList");
       const newProfileDiv = document.querySelector("#newProfile");
       const newTickerDiv = document.querySelector("#newTicker");
-      
-      
+      const updateProfileDiv = document.querySelector("#updateProfile");
+           
       class Ticker {
         constructor(symbol,target,exchange) {
         	this.symbol=symbol;
@@ -187,63 +92,15 @@ type="submit"> </div>
           this.risk=risk;
         }
       }
-      
-/* Function handling the button to create a new profile */      
-      function createProfile() {
-        
-        newProfileDiv.style.zIndex=10; /* Bring profile creation div up front */
-        newProfile= new Profile('temp','L'); /* Create a temp Profile object with Low risk */
-        console.log(newProfile);
-      }
-      
-/* Function adding a table row on table profileTickers for adding a ticker */      
-      function addTickerRow(t){
-        var table = document.getElementById(t);
-        var row = table.insertRow();
-        symbol=row.insertCell();
-        symbol.setAttribute('contenteditable','true');
-        symbol.setAttribute('class','tickerSymbol');
-        var exchange=row.insertCell();
-        exchange.setAttribute('contenteditable','true');
-        exchange.innerHTML="TSX";
-        var target=row.insertCell();
-        target.setAttribute('contenteditable','true');
-        target.innerHTML=0;
-        target.setAttribute('class','target');
-        target.setAttribute('onblur','recalculate(this)');
-        var stockPrice=row.insertCell();
-        stockPrice.setAttribute('class','stockPrice');
-        
-       
-      }
-      
-      function recalculate(tc) {
-        console.log('recalculate....')
-           var targets = document.getElementsByClassName('target');
-           var targetCash = document.getElementById('targetCash');
-        	 let sum=Number(0); 
-        try {
-           for (i=0;i<targets.length;i++) {
-             sum=sum+Number(targets[i].innerText);
-             console.log(sum);
-             if (sum > 100) throw("Targets>100%!");
-           }
-           targetCash.innerText = 100 - sum;
-        }
-        catch (e) {
-           alert(e);
-        }
-      }
-      
-      function saveProfileTable(t) {
-        
-      }
-      
-/*      function cancelNewProfile() {
-        newProfileDiv.style.zIndex=-1; 
-      }  
-      newProfile.addEventListener('click',createProfile); 
-      cancelNewProfilediv.addEventListener('click',cancelNewProfile); */
+
+<% include saveprofile %>
+<% include listprofiles %>
+<% include tickerfeed %>
+
+<% include functionCreateProfile %>      
+<% include functionAddTickerRow %>
+<% include editprofile %>  
+
     </script>
   </body>
 </html>

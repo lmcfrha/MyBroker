@@ -1,0 +1,53 @@
+// When SAVE profile is pressed, check that there are 
+// - no empty ticker cell
+// - no Unknown cell
+// - no duplicate ticker
+      function saveProfileTable() {
+    <!-- This function turns the table into a JSON object and saves the new profile in the DB -->
+        try {
+             var tableJson = $('#profileTickers').tableToJSON(
+               {
+                 ignoreColumns: [3],
+                 extractor : function (cellIndex, $cell) {
+                   if ($cell.text() == "" && cellIndex <3)
+                   {console.log($cell.text());
+                    throw "anEmptyCell";}
+                   else if ($cell.text() == "Unknown")
+                    throw "anUnknownSymbol";
+                   else
+                   {return $cell.text()}
+                 }
+               }
+               );
+             // Check if there are duplicate symbols
+			 var arrayLength = tableJson.length;
+			 var map = new Map();
+    		 for (var i = 0; i < arrayLength; i++) {
+        		    if (map.has(tableJson[i].Ticker)) 
+        		    	throw "duplicateSymbol"; 
+        		    else 
+        		    	map.set(tableJson[i].Ticker, 'foo');
+    		 }
+             tableJson.name = newProfile.profileName;
+             tableJson.risk = newProfile.risk;
+             postNewProfile = { "name": newProfile.profileName, "risk":newProfile.risk, "stocks": tableJson}; 
+              console.log(postNewProfile);
+             $.when( $.ajax({ method: 'POST', url: 'admin/profile',  data: postNewProfile , datatype: 'json' }) )
+              .then(function(response, status, xhr)
+                    { 
+                      if (status == 'success') 
+                         { console.log(response);
+                           listProfiles();
+                           newProfileDiv.style.zIndex=-1;
+                           newProfileListDiv.style.zIndex=10;
+                           location.reload();
+                           console.log('After saving new bringing the profile list to foreground');
+                         }
+                      else throw "status"; });  
+        }
+        catch(e) {
+          alert(e);
+        }
+      }
+      
+      $("#saveProfile").click(function(event){ saveProfileTable() });

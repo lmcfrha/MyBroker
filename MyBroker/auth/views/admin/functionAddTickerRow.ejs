@@ -1,0 +1,59 @@
+/* Function adding a table row on table profileTickers for adding a ticker */      
+      function addTickerRow(t,tc,tclass){
+        var table = document.getElementById(t);
+        var row = table.insertRow();
+        symbol=row.insertCell();
+        symbol.setAttribute('contenteditable','true');
+        symbol.setAttribute('class','tickerSymbol');
+        var exchange=row.insertCell();
+        exchange.setAttribute('contenteditable','true');
+        exchange.innerHTML="TSX";
+        var target=row.insertCell();
+        target.setAttribute('contenteditable','true');
+        target.innerHTML=0;
+        target.setAttribute('class',tclass);
+        target.setAttribute('onblur','recalculate("'+tc+'","'+tclass+'")');
+        var stockPrice=row.insertCell();
+        stockPrice.setAttribute('class','stockPrice');       
+      }
+      
+      function loadTickerRows(tickertable,tickerlist){
+        var arrayLength = tickerlist.length; 
+        var table = document.getElementById(tickertable);
+        for (var i = 0; i < arrayLength; i++) {
+          var row = table.insertRow();
+          symbol=row.insertCell();
+          symbol.setAttribute('contenteditable','true');
+          symbol.setAttribute('class','tickerSymbol');
+          symbol.innerHTML=tickerlist[i].symbol;
+          var exchange=row.insertCell();
+          exchange.setAttribute('contenteditable','true');
+          exchange.innerHTML=tickerlist[i].exchange;
+          var target=row.insertCell();
+          target.setAttribute('contenteditable','true');
+          target.innerHTML=tickerlist[i].target;
+          target.setAttribute('class','updateTargetClass');
+          target.setAttribute('onblur','recalculate("updateTargetCash","updateTargetClass")');
+          var stockPrice=row.insertCell();
+          stockPrice.setAttribute('class','stockPrice');
+          recalculate('updateTargetCash','updateTargetClass');
+        }      
+      }
+      
+      function recalculate(tc,tclass) {
+        console.log('recalculate....')
+           var targets = document.getElementsByClassName(tclass);
+           var targetCash = document.getElementById(tc);
+        	 let sum=Number(0); 
+        try {
+           for (i=0;i<targets.length;i++) {
+             sum=sum+Number(targets[i].innerText);
+             console.log(sum);
+             if (sum > 100) throw("Targets>100%!");
+           }
+           targetCash.innerText = 100 - sum;
+        }
+        catch (e) {
+           alert(e);
+        }
+      }

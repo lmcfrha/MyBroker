@@ -1,0 +1,35 @@
+// Refresh the list of profiles, for display. The list returned from the GET /admin/profiles. Then the 
+      function listProfiles() {
+// This function fetches the list of profiles from the DB and sets the update profile table callback
+        try {
+             $.when( $.ajax({ method: 'GET', url: 'admin/profiles', datatype: 'json' }) )
+              .then(updateProfilesTable);
+        }
+        catch(e) {
+          alert(e);
+        }        
+      }
+
+      function updateProfilesTable(response, status, xhr)
+        { 
+           if (status == 'success') 
+              { console.log(response);
+                var arrayLength = response.length;
+                var table = document.getElementById('profilesTable');
+    		    for (var i = 0; i < arrayLength; i++) {
+                   var row = table.insertRow();
+                   var profileName=row.insertCell();
+                   profileName.innerHTML=response[i].profilename;
+                   var profileRisk=row.insertCell();
+                   profileRisk.innerHTML=response[i].risk;
+                   var profileEdit=row.insertCell();                    
+                   profileEdit.innerHTML='<button id="editProfile" onclick="editProfile(\''+response[i].profilename+'\')"><img src="https://img.icons8.com/color/48/000000/pencil.png" alt="Edit"></button>';
+                   var profileDelete=row.insertCell(); 
+                   profileDelete.innerHTML='<img src="https://img.icons8.com/color/48/000000/trash.png" alt="Delete">';         		     
+        		}
+              }
+           else throw "status";
+        }
+
+// Initialize the profile list table, for display:         
+        listProfiles();

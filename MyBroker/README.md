@@ -66,11 +66,11 @@ Once the express app is created:
 	1. express app utils mounted on /mybroker/utils/		
 	2. express app auth mounted on /mybroker
 
-## Sub app _utils_ 
+## Sub app _utils_ /mybroker/utils
 - GET /stocks/<symbol>: to retrieve a stock quote (uses the adapters' getQuotesP promise)
 
 
-## Sub app _auth_ 
+## Sub app _auth_  /mybroker
 - Add the __session__ middleware express-mysql-session.
 - Add middleware to display session error and messages.
 - __createUser__ function definition: createUser returns the hash call back function, parameterized with the info submitted in the form (req form parameters) so it all can be used to update the user table in the DB.
@@ -86,7 +86,8 @@ Then some routing:  <br>
 - GET /login: renders login view<br>
 - GET /register: renders register view<br>
 - GET /admin: renders admin/adminconsole after verifying the user in the session is <em>admin</em>.<br>
-- POST __/admin__: called when a (new) profile is Saved. Updates the DB: Tickers, Profiles. Add new tickers to ticker feed. Save the new profile in the profile table.<br>
+- GET __/admin/profiles__: returns the list of profiles (need to be admin) so the admin console can display in a table.</br>
+- POST __/admin/profile__: called when a (new) profile is Saved. Updates the DB: Tickers, Profiles. Add new tickers to ticker feed. Save the new profile in the profile table.<br>
 - POST __/register__: reads the posted data when creating a user and calculates hash with  createUser invoked to set the hash function callback which will save the new user to the DB<br>
 - POST __/login__: uses calls authenticate function to check the password and store in the session the user and the success message if authentication succeeds or err message if authentication fails.Then it redirects to 'back' (an alias for req.get('Referrer'))<br>
 - GET __/feed/tickers__: this is where client initiates the event stream. Stream sends periodically (every ${config_financeapi.refresh} sec), the <em>quotesTape</em> Json object (refers to Adapter module to see how quotesTape is build).

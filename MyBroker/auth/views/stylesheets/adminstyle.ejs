@@ -1,62 +1,67 @@
     <style title="AdminConsole">
- 			body {
-  			margin: 0;
+ 	   body { margin: 0;
 			}
-      /* Page layout */
-      .topline { grid-area: header; 
-               color: black; 
-               background-color: white; 
-               padding: 15px; 
-               text-align: center; 
-               margin: 0; 
-               position: sticky;
-               top: 0;
-							 }
-      .sidemenu { grid-area: menu; margin: 0;}
-      /* the following classes are for the workspace area, 
-      using z-index to bring up front the div to activate */
-			.profileList { 
-               grid-area: main; 
-               background-color: black; 
-               color: yellow; 
-               text-align: center; 
-               margin: 0;
-      				 }
-      .newProfile { 
-               grid-area: main; 
-               background-color: grey;
-               color: yellow; 
-               text-align: center; 
-               margin: 0;
-               z-index: -1; 
-      				 }
-      .newTicker {
-        				position: absolute;
-        				top: 25%;
-        				left: 25%;
-        				height: 50%;
-        				width: 50%;
-               	background-color: lightblue;
-               	color: black; 
-               	text-align: center; 
-               	margin: 0;
-               	z-index: -1; 
-                overflow: auto;
-      				 }
-
-      .workspace {
-        margin: 0;
-  			display: grid;
-        grid-template-columns: 100px 1fr 1fr 1fr;
-        grid-template-rows: 1fr 200px 200px 200px;
-        grid-template-areas:
-			    'header header header header'
-			    'menu main main main'
-			    'menu main main main'
-          'menu main main main'
-			    'menu main main main';
-			}
+			
+/* AdminConsole page layout: */
       
+      .workspace { margin: 0;
+  				   display: grid;
+        		   grid-template-columns: 100px 1fr 1fr 1fr;
+        		   grid-template-rows: 1fr 200px 200px 200px;
+        		   grid-template-areas:
+					    'header header header header'
+					    'menu main main main'
+			    		'menu main main main'
+						'menu main main main'
+			    		'menu main main main';
+				 }
+				 
+/* AdminConsole page header: */			 
+      .topline { grid-area: header; 
+                 color: black; 
+                 background-color: white; 
+                 padding: 15px; 
+                 text-align: center; 
+                 margin: 0; 
+                 position: sticky;
+                 top: 0;
+			   }
+/* AdminConsole Menu div: */				   
+      .sidemenu { grid-area: menu; 
+      			  margin: 0;
+      			}
+      			
+/* AdminConsole work area: the following class selectors are for the workspace area, 
+   using z-index to bring up front the div to activate:
+   - profile list (profileList)
+   - create profile (newProfile)
+   - ... */
+	  .profileList { grid-area: main; 
+               		 background-color: black; 
+               		 color: yellow; 
+               		 text-align: center; 
+               		 margin: 0;
+      			   }
+      .newProfile { grid-area: main; 
+               		background-color: grey;
+               		color: yellow; 
+               		text-align: center; 
+               		margin: 0;
+               		z-index: -1; 
+      			  }
+      .newTicker { position: absolute;
+        		   top: 25%;
+        		   left: 25%;
+        		   height: 50%;
+        		   width: 50%;
+               	   background-color: lightblue;
+               	   color: black; 
+               	   text-align: center; 
+               	   margin: 0;
+               	   z-index: -1; 
+                   overflow: auto;
+      			 }
+
       
       table, th, td {
   			border: 1px solid black;
@@ -75,31 +80,38 @@
 			  color: white;
 			}
       td { height: 25px;}
-      /* End page layout */
-      /* Format the menu */
-      #menuprincipal ul {
-  			list-style-type: none;
-  			margin: 0;
-  			padding: 0;
-  			background-color: #f1f1f1;
-        height: 75%;  /* Full height */
-			  position: fixed; /*  Make it stick, even on scroll */
-			  overflow: auto;  /* Enable scrolling if the sidenav has too much content */
+      
+      #editProfile {
+          background-color:black;
+          border-color:black;
       }
-    	#menuprincipal li a {
-    			display: block;
-          color: red;
-				  padding: 8px 16px;
-          text-decoration: none;
-			}
+      /* End page layout */
+      
+      
+/* Format the menu - start */
+      #menuprincipal ul { list-style-type: none;
+  						  margin: 0;
+  						  padding: 0;
+  						  background-color: #f1f1f1;
+        				  height: 75%;  /* Full height */
+			  			  position: fixed; /*  Make it stick, even on scroll */
+			  			  overflow: auto;  /* Enable scrolling if the sidenav has too much content */
+      					}
+      					
+      #menuprincipal li a { display: block;
+          					color: red;
+				  			padding: 8px 16px;
+          					text-decoration: none;
+						  }
+						  
       /* Change the link color on hover */
-      #menuprincipal li a.active {
- 			 	background-color: #4CAF50;
-			  color: white;
-			}
+      #menuprincipal li a.active { background-color: #4CAF50;
+			  					   color: white;
+								 }
 
-			#menuprincipal li a:hover:not(.active) {
-			  background-color: #555;
-			  color: white;
-			}
+	  #menuprincipal li a:hover:not(.active) { background-color: #555;
+			  								   color: white;
+											 }
+/* Format the menu - End */										 
+	
     </style>
