@@ -49,20 +49,19 @@
                		margin: 0;
                		z-index: -1; 
       			  }
-      .newTicker { position: absolute;
-        		   top: 25%;
-        		   left: 25%;
-        		   height: 50%;
-        		   width: 50%;
+      .newTicker { grid-area: main;
                	   background-color: lightblue;
                	   color: black; 
                	   text-align: center; 
                	   margin: 0;
-               	   z-index: -1; 
+               	   z-index: 90; 
                    overflow: auto;
       			 }
 
+/* JQuery UI - the only way I found to get the dialog on top! Damned */
+/*      .ui-dialog { z-index: 1000 !important ;}   */
       
+         
       table, th, td {
   			border: 1px solid black;
   			text-transform: uppercase;

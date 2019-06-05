@@ -41,8 +41,8 @@
           var stockPrice=row.insertCell();
           stockPrice.setAttribute('class','stockPrice'); /* stockPrice class used locate where to put the ticker value */
           stockPrice.setAttribute('id',`loadTable_price_${row.rowIndex}`);
-          recalculate('updateTargetCash','updateTargetClass');
-        }      
+        } 
+        recalculate('updateTargetCash','updateTargetClass');     
       }
       
       function recalculate(tc,tclass) {
@@ -53,18 +53,18 @@
         try {
            for (i=0;i<targets.length;i++) {
              sum=sum+Number(targets[i].innerText);
-             console.log(sum);
              if (sum > 100) throw("Targets>100%!");
            }
            targetCash.innerText = 100 - sum;
         }
         catch (e) {
-           alert(e);
+ /*          alert(e); */
+             targetCash.innerText = "";
+           $( "#over100" ).dialog("open");
         }
       }
       
       function cleanupStockPrice(id) {
-         console.log("Need to CLEAR: "+id);
          document.getElementById(id).innerHTML="";
       }   
          

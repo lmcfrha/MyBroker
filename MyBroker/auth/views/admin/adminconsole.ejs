@@ -5,14 +5,28 @@
 
     <title>MyBrokerAdminConsole</title>
 
+<!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<!-- JQuery UI -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
-    <!-- html to json plugin: https://www.npmjs.com/package/table-to-json -->
+<!-- html to json plugin: https://www.npmjs.com/package/table-to-json -->
     <script src="/scripts/jquery.tabletojson.js"></script>
 
-<script>    
 <!-- JQuery section -->
-$(document).ready(function(){ });
+<script>    
+$(document).ready();
+</script>
+<script>
+$( function(){
+  $("#over100").dialog({ 
+     autoOpen: false,   
+     classes: {
+        "ui-dialog": "error"
+     } 
+     });
+} );
 </script>
 <!-- End JQuery section -->
 
@@ -22,7 +36,7 @@ $(document).ready(function(){ });
   <body>
     <div class="workspace">
 
-  <!-- AdminConsole layout -->
+<!-- AdminConsole layout -->
       <div class="topline">MY BROKER ADMIN CONSOLE</div>
       <div class="sidemenu" id="menuprincipal">
         <ul>
@@ -32,51 +46,50 @@ $(document).ready(function(){ });
           <li><a href="Abaoot">Blah</a></li>
         </ul>
       </div>
+
+<!-- div for displaying the list of available profiles.
+    the script section at the end of the file contains the initialization function listProfiles() -->
       <div id="profileList" class="profileList">
-        <p>PROFILE LIST </p>
+        <p>PROFILE LIST </p> 
+        <button id="createProfile" onclick="createProfile()"> New... </button>
         <div style="overflow-x:auto;">
 
 <% include tableProfiles %>   
 
-      </div>
-        <button id="createProfile" onclick="createProfile()"> New... </button>
-        <input name="Modify" value=" Edit..." form="ProfileCommand" type="submit">
-        <input name="Delete" value=" Delete " form="ProfileCommand" type="submit">
+        </div>
       </div>
       
+<!-- div for creating a new profile. -->
       <div id="newProfile" class="newProfile">
         <p style="text-align: center;">DEFINE NEW PROFILE</p>
 
-<% include tablesNewProfile %>   
+<% include tableNewProfile %>   
 
         <button id="addTicker" onclick="addTickerRow('profileTickers','targetCash','targetClass')"> Add </button>
         <button id="saveProfile"> Save </button> 
         <button id="cancel" onclick="cancel()"> Cancel </button>
       </div>
-      
+
+<!-- div for updating an existing profile. -->      
       <div id="updateProfile" class="newProfile">
         <p style="text-align: center;">UPDATE PROFILE <span id="updateProfileName" style = "color:white;font-weight:bold;text-transform:uppercase;"></span> 
         (<span id="updateProfileRisk" style = "color:white;font-weight:bold;"></span>)</p>
 
-<% include updateProfile %>   
+<% include tableUpdateProfile %>   
 
         <button id="insertTicker" onclick="addTickerRow('updateProfileTickers','updateTargetCash','updateTargetClass')"> Add </button>
         <button id="saveUpdatedProfile"> Save </button> 
         <button id="cancel" onclick="cancel()"> Cancel </button>
+
       </div>
-      <div id="newTicker" class="newTicker">
-        <p style="text-align: center;">ADD A NEW SYMBOL TO THE PROFILE </p>
-        <input name="Check" value=" Check " form="ProfileCommand" class="saveNewProfile" type="submit"> 
-        <input name="Save" value=" Save " form="ProfileCommand" class="saveNewProfile" type="submit"> 
-        <input name="Cancel" value=" Cancel " form="ProfileCommand" class="cancelNewProfile" type="submit">
-      </div>
+      
     </div>
     
+<% include dialogs %>    
     <script>
       /* Retrieve access to <div> elements for JavaScript control */
       const newProfileListDiv = document.querySelector("#profileList");
       const newProfileDiv = document.querySelector("#newProfile");
-      const newTickerDiv = document.querySelector("#newTicker");
       const updateProfileDiv = document.querySelector("#updateProfile");
            
       class Ticker {
@@ -98,9 +111,9 @@ $(document).ready(function(){ });
 <% include listprofiles %>
 <% include tickerfeed %>
 
-<% include functionCreateProfile %>      
-<% include functionAddTickerRow %>
-<% include editprofile %>  
+
+<% include functionsCRUDProfile %>      
+<% include functionsUtil %>  
 
     </script>
   </body>

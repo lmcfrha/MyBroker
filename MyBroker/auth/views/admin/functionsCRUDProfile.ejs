@@ -1,0 +1,36 @@
+/* Function handling the button to create a new profile - it creates a Profile object */      
+      function createProfile() {        
+        newProfileDiv.style.zIndex=10; /* Bring profile creation div up front */
+        $("#profileList").scrollTop(0);
+        newProfile= new Profile('temp','F'); /* Create a temp Profile object with Low risk */        
+        console.log(newProfile);
+      }
+      function updateProfileName(name,risk) {        
+        updateProfileDiv.style.zIndex=10; /* Bring profile update div up front */
+        $("#profileList").scrollTop(0);      
+        modProfile= new Profile(name,risk); 
+        document.getElementById('updateProfileName').innerHTML=name;
+        document.getElementById('updateProfileRisk').innerHTML=risk;
+        console.log(modProfile);
+      }
+//  Fetches the profile data, for editing. The profile is returned from the GET /admin/profile.
+    function editProfile(profilename) {
+    <!-- This function turns the table into a JSON object and saves the new profile in the DB -->
+        try {
+             $.when( $.ajax({ method: 'GET', url: 'admin/profile', data: {name: profilename}, datatype: 'json' }) )
+              .then(editProfileTable);
+        }
+        catch(e) {
+          alert(e);
+        }        
+      }
+// Once the profile is returned, display it in the profile edit div which is brought in the foreground:
+      function editProfileTable(response, status, xhr)
+        { 
+           if (status == 'success') 
+              { console.log(response);
+                updateProfileName(response[0].profilename,response[0].risk);
+                loadTickerRows('updateProfileTickers',response);
+              }
+           else throw "status";
+        }

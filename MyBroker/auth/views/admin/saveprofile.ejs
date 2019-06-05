@@ -39,7 +39,7 @@
                   tableJson.risk = $("#updateProfileRisk").text();
                }
              postNewProfile = { "name": tableJson.name, "risk":tableJson.risk, "stocks": tableJson}; 
-              console.log(postNewProfile);
+             console.log(postNewProfile);
               
              if (tableselector === "#profileTickers") {
                $.when( $.ajax({ method: 'POST', url: 'admin/profile',  data: postNewProfile , datatype: 'json' }) )
@@ -50,8 +50,9 @@
                            listProfiles();
                            newProfileDiv.style.zIndex=-1;
                            newProfileListDiv.style.zIndex=10;
+                           $("#profileList").scrollTop(0);
                            location.reload();
-                           console.log('After saving new bringing the profile list to foreground');
+                           console.log('After saving new profile, bringing the profile list to foreground');
                          }
                       else throw "status"; });
              }
@@ -64,8 +65,9 @@
                            listProfiles();
                            newProfileDiv.style.zIndex=-1;
                            newProfileListDiv.style.zIndex=10;
+                           $("#profileList").scrollTop(0);
                            location.reload();
-                           console.log('After saving new bringing the profile list to foreground');
+                           console.log('After updating existing profile, bringing the profile list to foreground');
                          }
                       else throw "status"; });
              }
@@ -79,12 +81,11 @@
                            listProfiles();
                            newProfileDiv.style.zIndex=-1;
                            newProfileListDiv.style.zIndex=10;
+                           $("#profileList").scrollTop(0);
                            location.reload();
       }
       
       $("#saveProfile").click(function(event){ saveProfileTable('#profileTickers') });
       $("#saveUpdatedProfile").click(function(event){ saveProfileTable('#updateProfileTickers') });
-      
-      
- // Update a profile:
+
       
