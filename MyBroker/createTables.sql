@@ -27,7 +27,7 @@ CREATE TABLE `ticker`
  `profilename` varchar(45) NOT NULL ,
 PRIMARY KEY (`symbol`, `exchange`, `profilename`),
 KEY `fkIdx_27` (`profilename`),
-CONSTRAINT `FK_27` FOREIGN KEY `fkIdx_27` (`profilename`) REFERENCES `profile` (`profilename`)
+CONSTRAINT `FK_27` FOREIGN KEY `fkIdx_27` (`profilename`) REFERENCES `profile` (`profilename`) ON DELETE CASCADE ON UPDATE RESTRICT;
 );
 
 

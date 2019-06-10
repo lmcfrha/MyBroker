@@ -1,3 +1,7 @@
+//  ********************************************************************
+//  *********************** Create Profile *****************************
+//  ********************************************************************
+
 /* Function handling the button to create a new profile - it creates a Profile object */      
       function createProfile() {        
         newProfileDiv.style.zIndex=10; /* Bring profile creation div up front */
@@ -5,15 +9,13 @@
         newProfile= new Profile('temp','F'); /* Create a temp Profile object with Low risk */        
         console.log(newProfile);
       }
-      function updateProfileName(name,risk) {        
-        updateProfileDiv.style.zIndex=10; /* Bring profile update div up front */
-        $("#profileList").scrollTop(0);      
-        modProfile= new Profile(name,risk); 
-        document.getElementById('updateProfileName').innerHTML=name;
-        document.getElementById('updateProfileRisk').innerHTML=risk;
-        console.log(modProfile);
-      }
+      
+//  ********************************************************************
+//  ************************ Edit Profile ******************************
+//  ********************************************************************     
+//  Function handling the button to edit a profile (from the profile list).
 //  Fetches the profile data, for editing. The profile is returned from the GET /admin/profile.
+
     function editProfile(profilename) {
     <!-- This function turns the table into a JSON object and saves the new profile in the DB -->
         try {
@@ -31,6 +33,92 @@
               { console.log(response);
                 updateProfileName(response[0].profilename,response[0].risk);
                 loadTickerRows('updateProfileTickers',response);
+              }
+           else throw "status";
+        }
+        
+      function updateProfileName(name,risk) {        
+        updateProfileDiv.style.zIndex=10; /* Bring profile update div up front */
+        $("#profileList").scrollTop(0);      
+        modProfile= new Profile(name,risk); 
+        document.getElementById('updateProfileName').innerHTML=name;
+        document.getElementById('updateProfileRisk').innerHTML=risk;
+        console.log(modProfile);
+      }
+      
+
+
+//  ********************************************************************
+//  ************************ Read Profile List *************************
+//  ********************************************************************
+// Refresh the list of profiles, for display. 
+// The list is returned from the GET /admin/profiles.
+
+      function listProfiles() {
+// This function fetches the list of profiles from the DB and sets the update profile table callback
+        try {
+             $.when( $.ajax({ method: 'GET', url: 'admin/profiles', datatype: 'json' }) )
+              .then(updateProfilesTable);
+        }
+        catch(e) {
+          alert(e);
+        }        
+      }
+
+      function updateProfilesTable(response, status, xhr)
+        { 
+           if (status == 'success') 
+              { console.log(response);
+                var arrayLength = response.length;
+                var table = document.getElementById('profilesTable');
+    		    for (var i = 0; i < arrayLength; i++) {
+                   var row = table.insertRow();
+                   var profileName=row.insertCell();
+                   profileName.innerHTML=response[i].profilename;
+                   var profileRisk=row.insertCell();
+                   profileRisk.innerHTML=response[i].risk;
+                   var profileEdit=row.insertCell();                    
+                   profileEdit.innerHTML='<button id="editProfile" onclick="editProfile(\''+response[i].profilename+'\')"><img src="https://img.icons8.com/color/48/000000/pencil.png" alt="Edit"></button>';
+                   var profileDelete=row.insertCell(); 
+                   profileDelete.innerHTML='<button id="deleteProfile" onclick="deleteProfile(\''+response[i].profilename+'\')"><img src="https://img.icons8.com/color/48/000000/trash.png" alt="Delete"></button>';        		     
+                   var profileRebalance=row.insertCell(); 
+                   profileRebalance.innerHTML='<button id="rebalanceProfile" onclick="rebalanceProfile(\''+response[i].profilename+'\')"><img src="https://img.icons8.com/nolan/48/000000/scales.png" alt="Rebalance"></button>';        		     
+        		}
+              }
+           else throw "status";
+        }
+              
+//  ********************************************************************
+//  ************************ Delete Profile ****************************
+//  ********************************************************************           
+//  Function handling the button to delete a profile (from the profile list).
+//  Invokes DELETE /admin/profile with the profilename.
+//  Deletion logic: 
+//  - if no users have the profile, delete it immediately
+//  - do not offer the profile to users anymore 
+//  - if at least 1 user has the profile, set to 0 all targets (100% cash).
+//  - after the next rebalance, transfer the profile 100% cash in the user account and delete the profile.
+
+    function deleteProfile(profilename) {
+        if (confirm("You are about to delete profile "+profilename+". Press OK to confirm deletion, or Cancel")) {
+
+        try {
+             $.when( $.ajax({ method: 'DELETE', url: `admin/profile/${profilename}`, datatype: 'json' }) )
+              .then(deleteProfileTable);
+        }
+        catch(e) {
+          alert(e);
+        }   
+        
+        }     
+      }
+// Once the profile is returned, display it in the profile edit div which is brought in the foreground:
+      function deleteProfileTable(response, status, xhr)
+        { 
+           if (status == 'success') 
+              { console.log(response);
+                listProfiles();
+                location.reload();
               }
            else throw "status";
         }

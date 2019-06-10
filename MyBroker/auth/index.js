@@ -154,12 +154,9 @@ app.get('/admin/profile', roleAdmin, function(req, res){
 	  .catch(function(error) { console.log( "something went wrong:" ); console.log( error.code )}) ;
 });
 app.put('/admin/profile', roleAdmin, function(req, res){
-    // Called when a profile is Updated.
-	  // Insert or update the tickers
-	  // Tickers not replaced are deleted tickers: set 0 as target. 
-	  // They will be removed at the next portfolio rebalance.
+    // Called when a profile is Deleted.
 
-	// Update in the ticker table:
+	//
 	  var i;
 	  for (i=1; i < req.body.stocks.length; i++) {
 		  sql = "INSERT INTO ticker (symbol,target,exchange,profilename) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE target = ?;";
@@ -174,6 +171,46 @@ app.put('/admin/profile', roleAdmin, function(req, res){
 	  res.json(req.body);
 	  // res.redirect('../');
 });
+
+app.delete('/admin/profile/:profilename', roleAdmin, function(req, res){
+    // Called when a profile is deleted.
+	  // Check if profile is used.
+	  // If not used, delete profile
+	  // If used, set the targets to 0
+	  // Profile will be removed at the next portfolio rebalance.
+
+	// Update in the ticker table:
+//		  var sql = 'SELECT count(*) from account where profilename=?';
+	      var sql = 'SELECT username,accountid from account where profilename=?';
+		  var inserts = [`${req.params.profilename}`];
+		  var message;
+		  sql = mysql.format(sql,inserts);
+		  console.log(sql);
+		  mySqlPromise(sql,adapters)
+//		  .then((result)=>{var key = Object.keys(result[0])[0];console.log("Number of accounts using the profile: "+result[0][key])},
+		  .then((result)=>{
+			        var length = result.length;
+			        console.log("Number of accounts using the profile: "+length);
+			        if ( length === 0 )
+			        	{
+			        	var sqldelete = 'DELETE FROM profile WHERE profilename=?';
+ 			  		    sqldelete = mysql.format(sqldelete,inserts);
+ 			  		    console.log(sqldelete);
+ 			  		    message = inserts + " DELETED.";
+ 			 		    return mySqlPromise(sqldelete,adapters);
+			        	}
+			        else {
+			        	console.log("set profile targets to 0");
+ 			  		    message = inserts + " targets set to 0; Profile will be deleted at next rebalance.";
+			            }
+			        },
+				(error)=>{console.log("Delete oooops");console.log(error.code)})
+		  .catch(function() { message = "Screwed something went wrong!"  }) 
+		  .finally (function() {console.log(message);res.json(message);});
+	  
+	  // res.redirect('../');
+});
+
 
 app.get('/admin', roleAdmin, function(req, res){
 	  res.render('admin/adminconsole');
