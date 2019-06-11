@@ -1,3 +1,25 @@
+      function addCashRow(t,id,tclass){
+        var table = document.getElementById(t);
+        var row = table.insertRow();
+        symbol=row.insertCell();
+        symbol.setAttribute('contenteditable','false');
+        symbol.setAttribute('class','tickerSymbol');
+        symbol.innerHTML="CASH";
+        var exchange=row.insertCell();
+        exchange.setAttribute('contenteditable','false');
+        exchange.innerHTML="N/A";
+        var target=row.insertCell();
+        target.setAttribute('contenteditable','false');
+        target.setAttribute('class',tclass);
+        target.setAttribute('id', id);
+        target.innerHTML="100";
+        var stockPrice=row.insertCell();
+/*        stockPrice.setAttribute('class','stockPrice'); */
+        stockPrice.setAttribute('contenteditable','false');
+        stockPrice.innerHTML="1";
+
+      }
+      
 /* Function adding a table row on table profileTickers for adding a ticker */      
       function addTickerRow(t,tc,tclass){
         var table = document.getElementById(t);
@@ -24,23 +46,25 @@
         var arrayLength = tickerlist.length; 
         var table = document.getElementById(tickertable);
         for (var i = 0; i < arrayLength; i++) {
-          var row = table.insertRow();
-          symbol=row.insertCell();
-          symbol.setAttribute('contenteditable','true');
-          symbol.setAttribute('class','tickerSymbol');
-          symbol.setAttribute('onfocus',`cleanupStockPrice(\"loadTable_price_${row.rowIndex}\")`);
-          symbol.innerHTML=tickerlist[i].symbol;
-          var exchange=row.insertCell();
-          exchange.setAttribute('contenteditable','true');
-          exchange.innerHTML=tickerlist[i].exchange;
-          var target=row.insertCell();
-          target.setAttribute('contenteditable','true');
-          target.innerHTML=tickerlist[i].target;
-          target.setAttribute('class','updateTargetClass');
-          target.setAttribute('onblur','recalculate("updateTargetCash","updateTargetClass")');
-          var stockPrice=row.insertCell();
-          stockPrice.setAttribute('class','stockPrice'); /* stockPrice class used locate where to put the ticker value */
-          stockPrice.setAttribute('id',`loadTable_price_${row.rowIndex}`);
+          if (tickerlist[i].symbol != 'CASH' ) {
+            var row = table.insertRow();
+            symbol=row.insertCell();
+            symbol.setAttribute('contenteditable','true');
+            symbol.setAttribute('class','tickerSymbol');
+            symbol.setAttribute('onfocus',`cleanupStockPrice(\"loadTable_price_${row.rowIndex}\")`);
+            symbol.innerHTML=tickerlist[i].symbol;
+            var exchange=row.insertCell();
+            exchange.setAttribute('contenteditable','true');
+            exchange.innerHTML=tickerlist[i].exchange;
+            var target=row.insertCell();
+            target.setAttribute('contenteditable','true');
+            target.innerHTML=tickerlist[i].target;
+            target.setAttribute('class','updateTargetClass');
+            target.setAttribute('onblur','recalculate("updateTargetCash","updateTargetClass")');
+            var stockPrice=row.insertCell();
+            stockPrice.setAttribute('class','stockPrice'); /* stockPrice class used locate where to put the ticker value */
+            stockPrice.setAttribute('id',`loadTable_price_${row.rowIndex}`);
+          }
         } 
         recalculate('updateTargetCash','updateTargetClass');     
       }

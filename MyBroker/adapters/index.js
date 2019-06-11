@@ -228,7 +228,7 @@ quotesTape = {};
  * Function returns a Promise to retrieve the list is stock symbols from the database
  */
 getQuoteListP = (dbCon, tickerTable, symbolCol, exchCol) => new Promise( (resolve, reject) => {
-	dbCon.query("SELECT DISTINCT "+symbolCol+", "+exchCol+" FROM "+tickerTable, function (err, results) {
+	dbCon.query("SELECT DISTINCT "+symbolCol+", "+exchCol+" FROM "+tickerTable+" WHERE "+symbolCol+" <> 'CASH'", function (err, results) {
 	    if (err) {
 	    	 console.error('Error getting tickers from table: ' + err.message);
 	    	 console.log ('...go troubleshoot yourself.');

@@ -154,11 +154,10 @@ app.get('/admin/profile', roleAdmin, function(req, res){
 	  .catch(function(error) { console.log( "something went wrong:" ); console.log( error.code )}) ;
 });
 app.put('/admin/profile', roleAdmin, function(req, res){
-    // Called when a profile is Deleted.
+    // Called when a modified profile is Saved.
 
-	//
 	  var i;
-	  for (i=1; i < req.body.stocks.length; i++) {
+	  for (i=0; i < req.body.stocks.length; i++) {
 		  sql = "INSERT INTO ticker (symbol,target,exchange,profilename) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE target = ?;";
 		  inserts = [req.body.stocks[i].Ticker, req.body.stocks[i]['Target %'], req.body.stocks[i]['Exch.'], req.body.name, req.body.stocks[i]['Target %']];
 		  sql = mysql.format(sql,inserts);
@@ -200,8 +199,11 @@ app.delete('/admin/profile/:profilename', roleAdmin, function(req, res){
  			 		    return mySqlPromise(sqldelete,adapters);
 			        	}
 			        else {
-			        	console.log("set profile targets to 0");
- 			  		    message = inserts + " targets set to 0; Profile will be deleted at next rebalance.";
+			        	var sqlupdate = 'UPDATE ticker SET target=0 WHERE profilename=?';
+			        	sqlupdate = mysql.format(sqlupdate,inserts);
+			        	console.log(sqlupdate);
+ 			  		    message = inserts+" used in "+length+" accounts. PROFILE TARGETS ARE RESET TO 0. "+inserts+" will be deleted after next rebalance.";
+ 			  		    return mySqlPromise(sqlupdate,adapters);
 			            }
 			        },
 				(error)=>{console.log("Delete oooops");console.log(error.code)})
@@ -231,7 +233,7 @@ app.post('/admin/profile', roleAdmin, function(req,res){
     
 	// Save new symbols in the ticker table:
 	  var i;
-	  for (i=1; i < req.body.stocks.length; i++) {
+	  for (i=0; i < req.body.stocks.length; i++) {
 		  sql = "INSERT INTO ticker VALUES (?,?,?,?);";
 		  inserts = [req.body.stocks[i].Ticker, req.body.stocks[i]['Target %'], req.body.stocks[i]['Exch.'], req.body.name];
 		  sql = mysql.format(sql,inserts);

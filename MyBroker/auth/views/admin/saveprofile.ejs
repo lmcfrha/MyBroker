@@ -10,7 +10,7 @@
                  ignoreColumns: [3],
                  extractor : function (cellIndex, $cell) {
                    if ($cell.text() == "")
-                   {console.log($cell.text());
+                   {
                     throw "anEmptyCell";}
                    else if ($cell.text() == "Unknown")
                     throw "anUnknownSymbol";
@@ -28,7 +28,6 @@
         		    	throw "duplicateSymbol"; 
         		    else 
         		    	map.set(tableJson[i].Ticker, tableJson[i].Ticker);
-        		    console.log(map.get(tableJson[i].Ticker));
     		 }
     		 if (tableselector === "#profileTickers") 
     		   {  tableJson.name = newProfile.profileName;
@@ -39,8 +38,7 @@
                   tableJson.risk = $("#updateProfileRisk").text();
                }
              postNewProfile = { "name": tableJson.name, "risk":tableJson.risk, "stocks": tableJson}; 
-             console.log(postNewProfile);
-              
+               
              if (tableselector === "#profileTickers") {
                $.when( $.ajax({ method: 'POST', url: 'admin/profile',  data: postNewProfile , datatype: 'json' }) )
                 .then(function(response, status, xhr)

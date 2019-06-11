@@ -2,7 +2,7 @@
           <tbody>
             <tr>
               <td>Profile name:</td>
-              <td><input default="temp" size="10" onchange="(function(t){newProfile.profileName=t;console.log(newProfile);})(this.value)"
+              <td><input default="temp" class="uppercase" size="10" onchange="(function(t){newProfile.profileName=t;console.log(newProfile);})(this.value)"
                   type="text"></td>
               <td >Risk level:</td>
               <td>
@@ -26,16 +26,8 @@
               <th>Target %</th>
               <th>Current Value</th>
             </tr>
-            <tr>
-              <td>Cash</td>
-              <td>N/A</td>
-              <td id="targetCash">100</td>
-              <td>
-              </td>
-            </tr>
+
           </tbody>
         </table>
         <div style="overflow-x:auto;"> ... profile content ...
-          <table id="profileTable">
-          </table>
         </div>
