@@ -15,7 +15,7 @@
                    else if ($cell.text() == "Unknown")
                     throw "anUnknownSymbol";
                    else
-                   {return $cell.text()}
+                   {return $cell.text().toUpperCase()}
                  }
                }
                );
@@ -23,19 +23,19 @@
 			 var arrayLength = tableJson.length;
 			 var map = new Map();
     		 for (var i = 0; i < arrayLength; i++) {
-    		        console.log("Index i ="+i);console.log(tableJson[i].Ticker);
-        		    if (map.has(tableJson[i].Ticker)) 
+    		        console.log("Index i ="+i);console.log(tableJson[i].Ticker.toUpperCase());
+        		    if (map.has(tableJson[i].Ticker.toUpperCase())) 
         		    	throw "duplicateSymbol"; 
         		    else 
-        		    	map.set(tableJson[i].Ticker, tableJson[i].Ticker);
+        		    	map.set(tableJson[i].Ticker.toUpperCase(), tableJson[i].Ticker.toUpperCase());
     		 }
     		 if (tableselector === "#profileTickers") 
-    		   {  tableJson.name = newProfile.profileName;
-                  tableJson.risk = newProfile.risk;
+    		   {  tableJson.name = newProfile.profileName.toUpperCase();
+                  tableJson.risk = newProfile.risk.toUpperCase();
                }
              else
-               {  tableJson.name = $("#updateProfileName").text();
-                  tableJson.risk = $("#updateProfileRisk").text();
+               {  tableJson.name = $("#updateProfileName").text().toUpperCase();
+                  tableJson.risk = $("#updateProfileRisk").text().toUpperCase();
                }
              postNewProfile = { "name": tableJson.name, "risk":tableJson.risk, "stocks": tableJson}; 
                

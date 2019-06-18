@@ -6,7 +6,10 @@ var express = require('express');
 var hash = require('pbkdf2-password')({ saltLength: 5})
 var path = require('path');
 var session = require('express-session');
-var mysql      = require('mysql');
+mysql      = require('mysql');
+
+var accounts = require('../accounts');
+
 /* Session store business... */
 var MySQLStore = require('express-mysql-session')(session);
 const config_mysql = require('../config/appConfig.json')['mysql']
@@ -217,6 +220,7 @@ app.delete('/admin/profile/:profilename', roleAdmin, function(req, res){
 app.get('/admin', roleAdmin, function(req, res){
 	  res.render('admin/adminconsole');
 });
+
 app.post('/admin/profile', roleAdmin, function(req,res){
       // Called when a (new) profile is Saved.
 	  // Update the DB: Tickers, Profiles
@@ -246,6 +250,10 @@ app.post('/admin/profile', roleAdmin, function(req,res){
 	  res.json(req.body);
 	  // res.redirect('../');
 });
+
+// Finally a clean call to module which defines the accounts object which 
+// contains the rebalance function definition
+app.post('/admin/rebalance', roleAdmin, accounts.rebalance);
 
 app.post('/register', function(req, res){
 	console.log(req)
@@ -301,7 +309,7 @@ app.get('/feed/tickers', function(req, res){
 
 
 /* Promise for DB operations */
-function mySqlPromise(sql,adapters) {
+mySqlPromise = function (sql,adapters) {
 /*	This function should be called to obtain a promise for the sql query arg.
  *  The sql query should be prepared as follows (example insert statement):
  *  var sql = "INSERT INTO user values (?,?,?,?,?,?,?,?,NOW());"

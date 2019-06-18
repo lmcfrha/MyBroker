@@ -64,7 +64,7 @@ CREATE TABLE `account`
  `units`         int ,
  `cash`          decimal ,
  `profilename_1` varchar(45) NOT NULL ,
-PRIMARY KEY (`username`, `accountid`),
+PRIMARY KEY (`username`, `accountid`, `profilename`, `symbol`, `exchange`),
 KEY `fkIdx_32` (`username`),
 CONSTRAINT `FK_32` FOREIGN KEY `fkIdx_32` (`username`) REFERENCES `user` (`username`),
 KEY `fkIdx_36` (`profilename_1`),
