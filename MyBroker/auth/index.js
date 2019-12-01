@@ -135,11 +135,7 @@ app.get('/register', function(req, res){
 	  res.render('register');
 });
 
-app.get('/register', function(req, res){
-	  res.render('register');
-});
-
-app.get('/admin/profiles', roleAdmin, function(req, res){
+ app.get('/admin/profiles', roleAdmin, function(req, res){
     // Retrieve profiles
 	  var sql = "SELECT * FROM profile;";
 	  console.log(sql);

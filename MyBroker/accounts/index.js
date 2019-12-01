@@ -45,7 +45,23 @@ var accounts = {
 		  })
 	  .then((result)=>{
 		  console.log(result);
-		  
+		  var map = new Map();
+		  for (i = 0; i < result.length; i++) { 
+			  var key = result[i].accountid;
+			  var stocklist = [];
+			  if ( map.get(key) != undefined ) {
+                 stocklist = map.get(key);
+			  }
+			  var stock = new Object();
+		      stock.symbol = result[i].symbol;
+		      stock.exchange =result[i].exchange;
+		      stock.units = result[i].units;
+		      stock.quote = quotesTape[stock.symbol];
+			  stocklist.push(stock);
+		      map.set(key,stocklist);
+		  }
+		  console.log(map);
+
 		  console.log(rebalance);
 		  })
 	  .catch(function(error) { console.log( "something went wrong:" ); console.log( error.code )}) ;

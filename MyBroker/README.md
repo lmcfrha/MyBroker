@@ -74,7 +74,7 @@ Once the express app is created:
 - Add the __session__ middleware express-mysql-session.
 - Add middleware to display session error and messages.
 - __createUser__ function definition: createUser returns the hash call back function, parameterized with the info submitted in the form (req form parameters) so it all can be used to update the user table in the DB.
-- __authenticate__ function definition: for authentication, retrieve the hash + salt based on user from the database. Use the password submitted to calculate the hash (use retrieved salt). If hash matches the one stored in DB, call the callback function submitted in authenticate.
+- __authenticate__ function definition: for authentication, retrieve the hash + salt based on user from the database. Use the password submitted to calculate the hash (use retrieved salt). If hash matches the one stored in DB, call the callback function submitted in authenticate. The callback will create a new session and store the username in it.
 - __restrict__ function definition: the restrict middleware function checks if there's a user defined for the session. If not, redirects to login. 
 - __roleAdmin__ function definition: the roleAdmin middleware function checks if the session user is admin. If not, it sends back 401.
 - __mySqlPromise__ promise definition: this is the promise for executing an SQL command on the DB
@@ -85,12 +85,26 @@ Then some routing:  <br>
 - GET /logout: destroys session and redirect to / <br> 
 - GET /login: renders login view<br>
 - GET /register: renders register view<br>
-- GET /admin: renders admin/adminconsole after verifying the user in the session is <em>admin</em>.<br>
+- GET /admin: renders admin/adminconsole after verifying the user in the session is <em>admin</em> through the roleAdmin middleware (just insert roleAdmin middleware when the path needs to be reserved for admin role).<br>
 - GET __/admin/profiles__: returns the list of profiles (need to be admin) so the admin console can display in a table.</br>
+- GET __/admin/profile?name=<profileName>__: returns the content of a profile (need to be admin).</br>
+- PUT __/admin/profile__: called when a modified profile is Saved.<br>
 - POST __/admin/profile__: called when a (new) profile is Saved. Updates the DB: Tickers, Profiles. Add new tickers to ticker feed. Save the new profile in the profile table.<br>
+- POST __/admin/rebalance__:   <br>
+- DELETE __/admin/profile/<profileName>__: called when a profile is deleted: checks if profile is used; if not used, delete profile, if used, set the targets to 0. Profile will be removed at the next portfolio rebalance..<br>
 - POST __/register__: reads the posted data when creating a user and calculates hash with  createUser invoked to set the hash function callback which will save the new user to the DB<br>
 - POST __/login__: uses calls authenticate function to check the password and store in the session the user and the success message if authentication succeeds or err message if authentication fails.Then it redirects to 'back' (an alias for req.get('Referrer'))<br>
 - GET __/feed/tickers__: this is where client initiates the event stream. Stream sends periodically (every ${config_financeapi.refresh} sec), the <em>quotesTape</em> Json object (refers to Adapter module to see how quotesTape is build).
+
+
+# Views
+- auth/views/admin/adminconsole.ejs: main Admin window
+
+# References
+- javascript: best reference is [Mozilla](https://developer.mozilla.org/en-US/docs/Learn/JavaScript)
+- CSS, Express... also Mozilla
+- [jQuery, jQuery UI](jquery.com)
+
 
 
 

@@ -209,8 +209,8 @@ function dbload(step) {
 		
 }
 
-dbload(dbstep); 
-exports.dbconnection=dbconnection;
+dbload(dbstep);  /* create or read the DB tables */ 
+exports.dbconnection=dbconnection; /* Keep the dbconnection and make it available */
 
 
 /**
@@ -220,12 +220,12 @@ exports.dbconnection=dbconnection;
  */
 const config_financeapi = require('../config/appConfig.json')['financeapi'];
 const reqPromise = require('request-promise-native');
-cheerio = require('cheerio') 
+cheerio = require('cheerio') /* Used as jQuery but server side: will be used to parse the TSX response */ 
 
 quotesTape = {};
 
 /**
- * Function returns a Promise to retrieve the list is stock symbols from the database
+ * Function returns a Promise to retrieve the list of stock symbols from the database
  */
 getQuoteListP = (dbCon, tickerTable, symbolCol, exchCol) => new Promise( (resolve, reject) => {
 	dbCon.query("SELECT DISTINCT "+symbolCol+", "+exchCol+" FROM "+tickerTable+" WHERE "+symbolCol+" <> 'CASH'", function (err, results) {
@@ -240,7 +240,7 @@ getQuoteListP = (dbCon, tickerTable, symbolCol, exchCol) => new Promise( (resolv
    });
 
 /**
- * Function retunes a Promise (all) to get all the current stock prices 
+ * Function returns a Promise (all) to get all the current stock prices 
  */
 getQuotesP = (quotes) => {
 	promiseQuoteArray = quotes.map( (quote) => {
@@ -267,13 +267,17 @@ function quotesTapeP(dbCon, tickerTable, symbolCol, exchCol) {
  * Extract from the yahoo response, the stock quote using the cheerio
  */
 		for (i = 0; i < quotes.length; i++) { 
-			const $ = cheerio.load(quotes[i])
-			quotesTape[$(".quote-ticker.tickerLarge").html()]=$(".quote-price.priceLarge span").html();
+			const $ = cheerio.load(quotes[i]);
+			/* Man those capitalist piglets, changing the format to make me work for nothing... */
+			var price = $(".price span").text();
+			$(".price").remove();
+			quotesTape[$(".labs-symbol").html().trim()]= price;
 		    }
 		console.log(JSON.stringify(quotesTape))},
-	        (reason) => {console.log(reason);})
-	.catch (function(err) {console.log(err)});
+	        (reason) => {console.log("CESTMOIIIIII "+reason+quotes);})
+	.catch (function(err) {console.log("COUCOUUUU"+err);for (i=0;i<quotes.length;i++) {quotesTape[quotes[i]]=55;}});
 }
 
+/* Set the periodic execution of quotes retrieval from TSX, updating the quotesTape table and printing to consolelogs */
 var interval = setInterval(quotesTapeP,`${config_financeapi.refresh}`,dbconnection,"ticker","symbol","exchange");
 

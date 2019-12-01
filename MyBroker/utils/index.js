@@ -24,7 +24,7 @@ app.get('/stock/:symbol', function(req, res){
 	getQuotesP(quotes)
 	.then( (quotes) => {
 			const $ = cheerio.load(quotes[0])
-			var stockprice = $(".quote-price.priceLarge span").html();
+			var stockprice = $(".price span").html();
 			if (stockprice === null) res.send("Unknown");
 			else res.send(stockprice)},
 	        (reason) => {console.log(reason);res.send(reason)})
