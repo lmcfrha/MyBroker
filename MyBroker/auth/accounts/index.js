@@ -1,10 +1,21 @@
 /**
  * 
- *  Rebalance module 
+ *  Accounts module - Sub App
  * 
  */
-var accounts = {
-	rebalance: function(req,res) {
+var express = require('express');
+var path = require('path');
+
+var app = module.exports = express();
+//config
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+app.use(express.urlencoded({ extended: false }));
+app.use('/rebalance', rebalance);
+
+function rebalance(req,res) {
        console.log(req.body.profile);
 // Get the profile definition and all the accounts that have this profile
 // SELECT * FROM mybroker.ticker where profilename = 'HANSLIK' order by symbol,exchange;
@@ -69,8 +80,7 @@ var accounts = {
 
 // add at the end of the processing of the rebalance to close the middleware 
           res.json(req.body);
-       }   // End of rebalance function definition
-    };  // End of accounts object definition
-module.exports = accounts;
+}   // End of rebalance 
+
 
 

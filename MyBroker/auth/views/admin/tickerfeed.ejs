@@ -1,5 +1,6 @@
 // The SSE client part, listening to the stock quotes from the server
 // to update the table; if the ticker is not there, fetch it "manually"
+// ...for me, brilliant.
       var tickerFeed=new EventSource('feed/tickers');
       tickerFeed.onmessage=function(m) {
            var list = JSON.parse(m.data);

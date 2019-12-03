@@ -148,7 +148,7 @@
         try {
              var postdata = {profile:profilename};
              console.log(postdata);
-             $.when( $.ajax({ method: 'POST', url: `admin/rebalance`, data: postdata , datatype: 'json' }) )
+             $.when( $.ajax({ method: 'POST', url: `accounts/rebalance`, data: postdata , datatype: 'json' }) )
               .then(rebalanceProfileDone);
         }
         catch(e) {

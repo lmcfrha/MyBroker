@@ -15,7 +15,7 @@ Based on:
 - session store [express-mysql-session](https://www.npmjs.com/package/express-mysql-session)
 - [Server side events information](https://stackoverflow.com/questions/11077857/what-are-long-polling-websockets-server-sent-events-sse-and-comet)
 [sse example](https://tomkersten.com/articles/server-sent-events-with-node/)
-- Database Design:
+- Database Design (Lmcfrha01):
 [https://app.sqldbm.com/MySQL/Edit/p54183/](https://app.sqldbm.com/MySQL/Edit/p54183/)
 
 Using (not anymore - getting stocks from TSX directly...) stock quotes from Alphavantage. Example:
@@ -85,9 +85,10 @@ Then some routing:  <br>
 - GET /logout: destroys session and redirect to / <br> 
 - GET /login: renders login view<br>
 - GET /register: renders register view<br>
-- GET /admin: renders admin/adminconsole after verifying the user in the session is <em>admin</em> through the roleAdmin middleware (just insert roleAdmin middleware when the path needs to be reserved for admin role).<br>
+- GET __/admin__: renders admin/adminconsole after verifying the user in the session is <em>admin</em> through the roleAdmin middleware (just insert roleAdmin middleware when the path needs to be reserved for admin role). This is the page to admin the profile (modify, create, delete, rebalance). 
+z-index (css) are is used to bring into view the different div elements. Dynamic content is initialized by initialize.ejs. Functions are defined in the functions*.ejs<br>
 - GET __/admin/profiles__: returns the list of profiles (need to be admin) so the admin console can display in a table.</br>
-- GET __/admin/profile?name=<profileName>__: returns the content of a profile (need to be admin).</br>
+- GET __/admin/profile?name=<profileName>__: returns the content of a profile - used internally(need to be admin).</br>
 - PUT __/admin/profile__: called when a modified profile is Saved.<br>
 - POST __/admin/profile__: called when a (new) profile is Saved. Updates the DB: Tickers, Profiles. Add new tickers to ticker feed. Save the new profile in the profile table.<br>
 - POST __/admin/rebalance__:   <br>

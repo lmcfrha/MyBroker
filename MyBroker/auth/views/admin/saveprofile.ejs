@@ -82,7 +82,8 @@
                            $("#profileList").scrollTop(0);
                            location.reload();
       }
-      
+
+// Here we attach to the click event the save profile processing:      
       $("#saveProfile").click(function(event){ saveProfileTable('#profileTickers') });
       $("#saveUpdatedProfile").click(function(event){ saveProfileTable('#updateProfileTickers') });
 

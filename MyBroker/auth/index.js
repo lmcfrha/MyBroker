@@ -8,7 +8,9 @@ var path = require('path');
 var session = require('express-session');
 mysql      = require('mysql');
 
-var accounts = require('../accounts');
+/* Sub apps for user and account management */
+var accounts = require('./accounts');
+var users = require('./users');
 
 /* Session store business... */
 var MySQLStore = require('express-mysql-session')(session);
@@ -52,6 +54,10 @@ app.use(function(req, res, next){
   if (msg) res.locals.message = '<p class="msg success">' + msg + '</p>';
   next();
 });
+
+//mount the auth sub-app on /mybroker - those are admin sub-apps
+app.use('/users/', roleAdmin, users);
+app.use('/accounts/', roleAdmin, accounts);
 
 /**
  * createUser returns the hash call back function, parameterized with the info submitted in the form
@@ -249,7 +255,7 @@ app.post('/admin/profile', roleAdmin, function(req,res){
 
 // Finally a clean call to module which defines the accounts object which 
 // contains the rebalance function definition
-app.post('/admin/rebalance', roleAdmin, accounts.rebalance);
+//app.post('/admin/rebalance', roleAdmin, accounts.rebalance);
 
 app.post('/register', function(req, res){
 	console.log(req)

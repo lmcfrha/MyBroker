@@ -17,6 +17,7 @@ var express = require('express')
   , http = require('http')
   , path = require('path')
   , auth = require('./auth')
+//  , users = require('./auth/users')
   , utils = require('./utils');
 
 
@@ -43,7 +44,7 @@ if ('development' == app.get('env')) {
 app.use('/mybroker/utils/', utils);
 //mount the auth sub-app on /mybroker
 app.use('/mybroker/', auth);
-
+//app.use('/mybroker/users', users);
 
 app.get('/', routes.index);
 app.get('/users', user.list);
