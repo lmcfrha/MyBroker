@@ -28,7 +28,7 @@ $( function(){
 <!-- End JQuery section -->
 
 <% include ../stylesheets/adminstyle %>
-
+<% include ../stylesheets/adminuserstyle %>
   </head>
   <body>
     <div class="workspace">
@@ -36,13 +36,17 @@ $( function(){
 <!-- AdminConsole layout -->
       <div class="topline">MY BROKER ADMIN CONSOLE</div>
       <div class="sidemenu" id="menuprincipal">
-        <ul>
-          <li><a class="active" href="Profiles">Profiles</a></li>
-          <li><a href="Users">Users</a></li>
-          <li><a href="Accounts">Accounts</a></li>
-          <li><a href="Abaoot">Blah</a></li>
-        </ul>
+       
+          <button onclick="listProfiles()">Profiles</button>
+          <button onclick="listUsers()">Users</button>
+          <button>Accounts</button>
+          <button>Blah</button>
+       
       </div>
+
+
+<div id="container" class="main">
+<!-- --------------- START div's for PROFILES -------------- -->    
 
 <!-- div for displaying the list of available profiles.
     the script section at the end of the file contains the initialization function listProfiles() -->
@@ -79,15 +83,49 @@ $( function(){
         <button id="cancel" onclick="cancel()"> Cancel </button>
 
       </div>
-      
-    </div>
     
+<!-- --------------- END div's for PROFILES ------------ --> 
+
+<!-- --------------- START div's for USERS ------------- --> 
+<!-- div for displaying the list of USERS.
+    the script section at the end of the file contains the initialization function listUsers() -->
+      <div id="userList" class="userList">
+        <p>USER LIST </p> 
+        <button id="createUser" onclick="createUser()"> New... </button>
+        <div style="overflow-x:auto;">
+
+<% include ./useradmin/tableUsers %>   
+
+        </div>
+      </div>
+      
+
+<!-- --------------- END div's for USERS ------------ --> 
+<!-- --------------- START div's for MANAGE USER ------------ -->
+      <div id="manageUser" class="manageUser">
+        <p id="titleManagedUser">filled by manageUser function</p> 
+        <button id="addAccount onclick="addAccount('filled_by_manageUser_function')"> Add Account... </button>
+        <div style="overflow-x:auto;">
+
+<% include ./useradmin/tableUserAccounts %>   
+
+        </div>
+      </div>
+<!-- --------------- END div's for MANAGE USER ------------ -->
+
+    </div>
+       
+</div>    
+</div>
 <% include dialogs %>    
     <script>
       /* Retrieve access to <div> elements for JavaScript control */
       const newProfileListDiv = document.querySelector("#profileList");
       const newProfileDiv = document.querySelector("#newProfile");
       const updateProfileDiv = document.querySelector("#updateProfile");
+      const profileListDiv = document.querySelector("#profileList");
+      const userListDiv = document.querySelector("#userList");
+      const manageUserDiv = document.querySelector("#manageUser");
            
       class Ticker {
         constructor(symbol,target,exchange) {
@@ -108,8 +146,10 @@ $( function(){
 <% include tickerfeed %>
 
 
-<% include functionsCRUDProfile %>      
+<% include functionsCRUDProfile %> 
+<% include ./useradmin/functionsCRUDUser %>           
 <% include functionsUtil %> 
+<% include ./useradmin/functionsUtil %>   
 <% include initialize %> 
 
     </script>

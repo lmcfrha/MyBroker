@@ -1,22 +1,83 @@
 //  ********************************************************************
-//  *********************** Create Profile *****************************
+//  ************************ Read Users List *************************
+//  ********************************************************************
+// Get the list of users, for display. 
+// The list is returned from the GET admin/users.
+
+      function listUsers() {
+// This function fetches the list of profiles from the DB and sets the update profile table callback
+        try {
+             $.when( $.ajax({ method: 'GET', url: 'admin/users', datatype: 'json' }) )
+              .then(updateUsersTable);
+        }
+        catch(e) {
+          alert(e);
+        }        
+      }
+
+      function updateUsersTable(response, status, xhr)
+        { 
+           if (status == 'success') 
+              { console.log(response);
+                var arrayLength = response.length;
+                $("#usersTable tr:gt(0)").remove();
+                var table = document.getElementById('usersTable');
+    		    for (var i = 0; i < arrayLength; i++) {
+                   var row = table.insertRow();
+                   var username=row.insertCell();
+                   username.innerHTML=response[i].username;
+                   var email=row.insertCell();
+                   email.innerHTML=response[i].email;
+                   var type=row.insertCell();
+                   type.innerHTML=response[i].type;
+                   var manage=row.insertCell(); 
+// The old way to do it ...when I didn't know better:                   
+//                   manage.innerHTML='<button id="manage" onclick="manageUser(\''+response[i].username+'\')"><img src="https://img.icons8.com/color/48/000000/folder-invoices.png" alt="Manage"></button>';        		     
+//                   manage.innerHTML='<button id="manage"><img src="https://img.icons8.com/color/48/000000/folder-invoices.png" alt="Manage"></button>'; 
+// And from now on, a little more professional:
+                   var theIcon = document.createElement("img");
+                   theIcon.src = "https://img.icons8.com/color/48/000000/folder-invoices.png";
+                   theIcon.alt = "Manage";
+                   manage.appendChild(theIcon);
+                   const idx = i;
+                   theIcon.addEventListener("click", function(){manageUser(response[idx]);});  
+// Notice the "const idx" line: this is because if you just use "i", the way closure works,
+// you'd end up with all cells with the same event listener handler using the same value of i, which 
+// would be the one at the end of the for loop. On top of it, that value would be outside the range
+// of response[]. Man that was hard to find...
+   		     
+                   }
+                // Send all divs to background, bring the one we're interested to front.
+                rstZindex();
+                userListDiv.style.zIndex = 10;
+              }
+           else throw "status";
+        }
+              
+//  ********************************************************************
+//  *********************** Manage User *****************************
 //  ********************************************************************
 
 /* Function handling the button to create a new profile - it creates a Profile object */      
-      function createProfile() {        
-        newProfileDiv.style.zIndex=10; /* Bring profile creation div up front */
-        $("#profileList").scrollTop(0);
-        newProfile= new Profile('temp','F'); /* Create a temp Profile object with Low risk */        
-        console.log(newProfile);
+      function manageUser(user) {
+        console.log(user);
+        $("#titleManagedUser").html(user.firstname+" "+user.lastname);
+// Go fetch the accounts and add table to page.
+        rstZindex();
+        manageUserDiv.style.zIndex = 10;        
+        
+//        $("#profileList").scrollTop(0);
+//        newProfile= new Profile('temp','F'); /* Create a temp Profile object with Low risk */        
+
       }
       
 //  ********************************************************************
-//  ************************ Edit Profile ******************************
+//  ************************ Edit User ******************************
 //  ********************************************************************     
 //  Function handling the button to edit a profile (from the profile list).
 //  Fetches the profile data, for editing. The profile is returned from the GET /admin/profile.
 
-    function editProfile(profilename) {
+    function editUser(user) {
     <!-- This function turns the table into a JSON object and saves the new profile in the DB -->
         try {
              $.when( $.ajax({ method: 'GET', url: 'admin/profile', data: {name: profilename}, datatype: 'json' }) )
@@ -48,50 +109,6 @@
       
 
 
-//  ********************************************************************
-//  ************************ Read Profile List *************************
-//  ********************************************************************
-// Refresh the list of profiles, for display. 
-// The list is returned from the GET /admin/profiles.
-
-      function listProfiles() {
-      // This function fetches the list of profiles from the DB and sets the update profile table callback
-        try {
-             $.when( $.ajax({ method: 'GET', url: 'admin/profiles', datatype: 'json' }) )
-              .then(updateProfilesTable);
-        }
-        catch(e) {
-          alert(e);
-        }        
-      }
-
-      function updateProfilesTable(response, status, xhr)
-        { 
-           if (status == 'success') 
-              { console.log(response);
-                var arrayLength = response.length;
-                $("#profilesTable tr:gt(0)").remove();
-                var table = document.getElementById('profilesTable');
-    		    for (var i = 0; i < arrayLength; i++) {
-                   var row = table.insertRow();
-                   var profileName=row.insertCell();
-                   profileName.innerHTML=response[i].profilename;
-                   var profileRisk=row.insertCell();
-                   profileRisk.innerHTML=response[i].risk;
-                   var profileEdit=row.insertCell();                    
-                   profileEdit.innerHTML='<button id="editProfile" onclick="editProfile(\''+response[i].profilename+'\')"><img src="https://img.icons8.com/color/48/000000/pencil.png" alt="Edit"></button>';
-                   var profileDelete=row.insertCell(); 
-                   profileDelete.innerHTML='<button id="deleteProfile" onclick="deleteProfile(\''+response[i].profilename+'\')"><img src="https://img.icons8.com/color/48/000000/trash.png" alt="Delete"></button>';        		     
-                   var profileRebalance=row.insertCell(); 
-                   profileRebalance.innerHTML='<button id="rebalanceProfile" onclick="rebalanceProfile(\''+response[i].profilename+'\')"><img src="https://img.icons8.com/nolan/48/000000/scales.png" alt="Rebalance"></button>';        		     
-        		}
-              // Send all divs to background, bring the one we're interested to front.
-                rstZindex();
-                profileListDiv.style.zIndex = 10;
-              }
-           else throw "status";
-        }
-              
 //  ********************************************************************
 //  ************************ Delete Profile ****************************
 //  ********************************************************************           

@@ -16,6 +16,11 @@
 			    		'menu main main main';
 				 }
 				 
+	  .main {grid-area: main;
+	         position: relative;
+	         }
+	  
+				 
 /* AdminConsole page header: */			 
       .topline { grid-area: header; 
                  color: black; 
@@ -25,6 +30,7 @@
                  margin: 0; 
                  position: sticky;
                  top: 0;
+                 z-index: 100;
 			   }
 /* AdminConsole Menu div: */				   
       .sidemenu { grid-area: menu; 
@@ -36,14 +42,36 @@
    - profile list (profileList)
    - create profile (newProfile)
    - ... */
-	  .profileList { grid-area: main; 
+	  .profileList { grid-area: main;
+	                 position: absolute;
+                     top: 0; 
+                     width: 100%;
+                     height: 100%;
                		 background-color: black; 
     			     text-transform: uppercase;
                		 color: yellow; 
                		 text-align: center; 
                		 margin: 0;
       			   }
+      			   
+      .userList { grid-area: main; 
+                  position: absolute;
+                  top: 0;
+                  width: 100%;
+                  height: 100%;
+               	   background-color: black; 
+    			   text-transform: uppercase;
+               	   color: yellow; 
+               	   text-align: center; 
+               	   margin: 0;
+               	   z-index: -1;
+      			 }
+      			   
       .newProfile { grid-area: main; 
+                    position: absolute;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
                		background-color: grey;
           			text-transform: uppercase;
                		color: yellow; 
@@ -52,6 +80,8 @@
                		z-index: -1; 
       			  }
       .newTicker { grid-area: main;
+       position: absolute;
+                    top: 0;
                	   background-color: lightblue;
        			   text-transform: uppercase;
                	   color: black; 
@@ -61,6 +91,18 @@
                    overflow: auto;
       			 }
 
+      .manageUser { grid-area: main; 
+                  position: absolute;
+                  top: 0;
+                  width: 100%;
+                  height: 100%;
+               	   background-color: grey; 
+    			   text-transform: uppercase;
+               	   color: yellow; 
+               	   text-align: center; 
+               	   margin: 0;
+               	   z-index: -1;
+      			 }
 /* JQuery UI - the only way I found to get the dialog on top! Damned */
 /*      .ui-dialog { z-index: 1000 !important ;}   */
       
@@ -105,27 +147,21 @@
       
       
 /* Format the menu - start */
-      #menuprincipal ul { list-style-type: none;
-  						  margin: 0;
-  						  padding: 0;
-  						  background-color: #f1f1f1;
-        				  height: 75%;  /* Full height */
-			  			  position: fixed; /*  Make it stick, even on scroll */
-			  			  overflow: auto;  /* Enable scrolling if the sidenav has too much content */
-      					}
       					
-      #menuprincipal li a { display: block;
-          					color: red;
-				  			padding: 8px 16px;
-          					text-decoration: none;
+      #menuprincipal button { display: block;
+      						  width: 100%;
+          					  color: red;
+				  			  padding: 8px 16px;
+          					  text-decoration: none;
+          					
 						  }
 						  
       /* Change the link color on hover */
-      #menuprincipal li a.active { background-color: #4CAF50;
+      #menuprincipal button:focus { background-color: #4CAF50;
 			  					   color: white;
 								 }
 
-	  #menuprincipal li a:hover:not(.active) { background-color: #555;
+	  #menuprincipal button:hover:not(:active) { background-color: #555;
 			  								   color: white;
 											 }
 /* Format the menu - End */										 

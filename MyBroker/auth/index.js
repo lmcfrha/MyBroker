@@ -55,9 +55,13 @@ app.use(function(req, res, next){
   next();
 });
 
-//mount the auth sub-app on /mybroker - those are admin sub-apps
-app.use('/users/', roleAdmin, users);
-app.use('/accounts/', roleAdmin, accounts);
+//mount the users and accounts sub-apps on /mybroker/admin - those are admin sub-apps
+// and for some reason, can't do roleAdmin,<sub-app> in one shot. Need
+// to do first the middleware roleAdmin function and then the subapp.
+app.use('/admin/users/',roleAdmin);
+app.use('/admin/users/', users);
+app.use('/accounts/', roleAdmin);
+app.use('/admin/accounts/', accounts);
 
 /**
  * createUser returns the hash call back function, parameterized with the info submitted in the form
@@ -117,6 +121,7 @@ function roleAdmin(req, res, next) {
 	  }
 }
 
+
 app.get('/', function(req, res){
   res.redirect('./login');
 });
@@ -145,7 +150,7 @@ app.get('/register', function(req, res){
     // Retrieve profiles
 	  var sql = "SELECT * FROM profile;";
 	  console.log(sql);
-	  mySqlPromise(sql,adapters)
+	  adapters.mySqlPromise(sql)
 	  .then((result)=>{console.log("Profile list:");console.log(result);res.send(result);} )
 	  .catch(function(error) { console.log( "something went wrong:" ); console.log( error.code )}) ;
 });
@@ -154,7 +159,7 @@ app.get('/admin/profile', roleAdmin, function(req, res){
     // Retrieve profiles
 	  var sql = "SELECT * FROM ticker, profile where profile.profilename='"+req.query.name+"' and ticker.profilename='"+req.query.name+"'";
 	  console.log(sql);
-	  mySqlPromise(sql,adapters)
+	  adapters.mySqlPromise(sql)
 	  .then((result)=>{console.log("Profile definition:");console.log(result);res.send(result);} )
 	  .catch(function(error) { console.log( "something went wrong:" ); console.log( error.code )}) ;
 });
@@ -167,7 +172,7 @@ app.put('/admin/profile', roleAdmin, function(req, res){
 		  inserts = [req.body.stocks[i].Ticker, req.body.stocks[i]['Target %'], req.body.stocks[i]['Exch.'], req.body.name, req.body.stocks[i]['Target %']];
 		  sql = mysql.format(sql,inserts);
 		  console.log(sql);
-		  mySqlPromise(sql,adapters)
+		  adapters.mySqlPromise(sql)
 		  .then((result)=>{console.log("Ticker Affected Rows:");console.log(result.affectedRows)},
 				(error)=>{console.log("Ticker oooops");console.log(error.code)})
 		  .catch(function() { console.log( "Ticker something went wrong!" ) }) ;
@@ -190,7 +195,7 @@ app.delete('/admin/profile/:profilename', roleAdmin, function(req, res){
 		  var message;
 		  sql = mysql.format(sql,inserts);
 		  console.log(sql);
-		  mySqlPromise(sql,adapters)
+		  adapters.mySqlPromise(sql)
 //		  .then((result)=>{var key = Object.keys(result[0])[0];console.log("Number of accounts using the profile: "+result[0][key])},
 		  .then((result)=>{
 			        var length = result.length;
@@ -201,14 +206,14 @@ app.delete('/admin/profile/:profilename', roleAdmin, function(req, res){
  			  		    sqldelete = mysql.format(sqldelete,inserts);
  			  		    console.log(sqldelete);
  			  		    message = inserts + " DELETED.";
- 			 		    return mySqlPromise(sqldelete,adapters);
+ 			 		    return adapters.mySqlPromise(sqldelete);
 			        	}
 			        else {
 			        	var sqlupdate = 'UPDATE ticker SET target=0 WHERE profilename=?';
 			        	sqlupdate = mysql.format(sqlupdate,inserts);
 			        	console.log(sqlupdate);
  			  		    message = inserts+" used in "+length+" accounts. PROFILE TARGETS ARE RESET TO 0. "+inserts+" will be deleted after next rebalance.";
- 			  		    return mySqlPromise(sqlupdate,adapters);
+ 			  		    return adapters.mySqlPromise(sqlupdate);
 			            }
 			        },
 				(error)=>{console.log("Delete oooops");console.log(error.code)})
@@ -233,7 +238,7 @@ app.post('/admin/profile', roleAdmin, function(req,res){
 	  var inserts = [req.body.name,req.body.risk];	
 	  sql = mysql.format(sql,inserts);
 	  console.log(sql);
-	  mySqlPromise(sql,adapters)
+	  adapters.mySqlPromise(sql)
 	  .then((result)=>{console.log("yeaaaaa Affected Rows:");console.log(result)} )
 	  .catch(function(error) { console.log( "something went wrong:" ); console.log( error.code )}) ;
     
@@ -244,7 +249,7 @@ app.post('/admin/profile', roleAdmin, function(req,res){
 		  inserts = [req.body.stocks[i].Ticker, req.body.stocks[i]['Target %'], req.body.stocks[i]['Exch.'], req.body.name];
 		  sql = mysql.format(sql,inserts);
 		  console.log(sql);
-		  mySqlPromise(sql,adapters)
+		  adapters.mySqlPromise(sql)
 		  .then((result)=>{console.log("Ticker Affected Rows:");console.log(result.affectedRows)},
 				(error)=>{console.log("Ticker oooops");console.log(error.code)})
 		  .catch(function() { console.log( "Ticker something went wrong!" ) }) ;
@@ -310,23 +315,7 @@ app.get('/feed/tickers', function(req, res){
 });
 
 
-/* Promise for DB operations */
-mySqlPromise = function (sql,adapters) {
-/*	This function should be called to obtain a promise for the sql query arg.
- *  The sql query should be prepared as follows (example insert statement):
- *  var sql = "INSERT INTO user values (?,?,?,?,?,?,?,?,NOW());"
- *	var inserts = [u,f,l,salt,hash,e,'S','T'];
- *	sql = mysql.format(sql,inserts);
- *
-*/
-	return new Promise(function(resolve,reject) {
-		adapters.dbconnection.query(sql, (error, results, fields) => 
-		{
-			if (error) return reject(error);
-			resolve(results);
-		} )
-	}) 
-}
+
 
 
 /* istanbul ignore next */

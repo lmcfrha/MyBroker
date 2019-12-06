@@ -1,0 +1,29 @@
+    <style title="AdminUserConsole">
+      			
+/* AdminUserConsole work area: the following class selectors are for the workspace area, 
+   using z-index to bring up front the div to activate:
+   - user list (userList)
+   - create profile (newUser)
+   - ... */
+	  .userList { grid-area: main; 
+               		 background-color: black; 
+    			     text-transform: uppercase;
+               		 color: yellow; 
+               		 text-align: center; 
+               		 margin: 0;
+      			   }
+      .newUser { grid-area: main; 
+               		background-color: grey;
+          			text-transform: uppercase;
+               		color: yellow; 
+               		text-align: center; 
+               		margin: 0;
+               		z-index: -1; 
+      			  }        
+      
+      #editUser,#deleteUser,#rebalanceUser {
+          background-color:black;
+          border-color:black;
+      }      							 
+	
+    </style>

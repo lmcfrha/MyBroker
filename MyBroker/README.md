@@ -18,6 +18,15 @@ Based on:
 - Database Design (Lmcfrha01):
 [https://app.sqldbm.com/MySQL/Edit/p54183/](https://app.sqldbm.com/MySQL/Edit/p54183/)
 
+[Must read!! for a beginner to get the basic understanding  the web programming building blocks.](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps/What_is_JavaScript)
+
+#### Programming tips
+
+
+[Don't use inline HTML event attributes (onclick, onmouseover, etc.)](https://stackoverflow.com/questions/43459890/javascript-function-doesnt-work-when-link-is-clicked/43459991#43459991)
+
+
+
 Using (not anymore - getting stocks from TSX directly...) stock quotes from Alphavantage. Example:
 [https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=TSX:ALA&apikey=MCAF9B429I44328U](https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=TSX:ALA&apikey=MCAF9B429I44328U)
 

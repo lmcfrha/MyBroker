@@ -281,3 +281,20 @@ function quotesTapeP(dbCon, tickerTable, symbolCol, exchCol) {
 /* Set the periodic execution of quotes retrieval from TSX, updating the quotesTape table and printing to consolelogs */
 var interval = setInterval(quotesTapeP,`${config_financeapi.refresh}`,dbconnection,"ticker","symbol","exchange");
 
+var mySqlPromise = function (sql) {
+	/*	This function should be called to obtain a promise for the sql query arg.
+	 *  The sql query should be prepared as follows (example insert statement):
+	 *  var sql = "INSERT INTO user values (?,?,?,?,?,?,?,?,NOW());"
+	 *	var inserts = [u,f,l,salt,hash,e,'S','T'];
+	 *	sql = mysql.format(sql,inserts);
+	 *
+	*/
+		return new Promise(function(resolve,reject) {
+			dbconnection.query(sql, (error, results, fields) => 
+			{
+				if (error) return reject(error);
+				resolve(results);
+			} )
+		}) 
+	}
+exports.mySqlPromise=mySqlPromise;
