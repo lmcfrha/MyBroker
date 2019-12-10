@@ -17,6 +17,7 @@
 //  Fetches the profile data, for editing. The profile is returned from the GET /admin/profile.
 
     function editProfile(profilename) {
+/// Eventually, we don't need to go to fetch it again, just use the profileMap now that we have it.    
     <!-- This function turns the table into a JSON object and saves the new profile in the DB -->
         try {
              $.when( $.ajax({ method: 'GET', url: 'admin/profile', data: {name: profilename}, datatype: 'json' }) )
@@ -50,6 +51,7 @@
 
 //  ********************************************************************
 //  ************************ Read Profile List *************************
+//  ********************** Populate Profile Map ************************
 //  ********************************************************************
 // Refresh the list of profiles, for display. 
 // The list is returned from the GET /admin/profiles.
@@ -58,11 +60,16 @@
       // This function fetches the list of profiles from the DB and sets the update profile table callback
         try {
              $.when( $.ajax({ method: 'GET', url: 'admin/profiles', datatype: 'json' }) )
-              .then(updateProfilesTable);
+              .then(updateProfilesTable)
+              .then(populateProfiles,displayError);
         }
         catch(e) {
           alert(e);
         }        
+      }
+
+      function displayError(error) {
+          alert(error);
       }
 
       function updateProfilesTable(response, status, xhr)
@@ -72,7 +79,18 @@
                 var arrayLength = response.length;
                 $("#profilesTable tr:gt(0)").remove();
                 var table = document.getElementById('profilesTable');
+/// Reset the profileMap for use throughout Admin page:
+                profileMap.clear();
+                profileContentPromises = [];             
+///   
     		    for (var i = 0; i < arrayLength; i++) {
+/// Populate the profileMap, create the promises to retrieve each profile content
+                   aProfile = new ProfileObject(response[i].profilename);
+                   aProfile.risk = response[i].risk;
+                   profileMap.set(response[i].profilename, aProfile);
+                   profileContentP = $.ajax({ method: 'GET', url: 'admin/profile', data: {name: response[i].profilename}, datatype: 'json' })
+                   profileContentPromises.push(profileContentP);
+///
                    var row = table.insertRow();
                    var profileName=row.insertCell();
                    profileName.innerHTML=response[i].profilename;
@@ -85,13 +103,30 @@
                    var profileRebalance=row.insertCell(); 
                    profileRebalance.innerHTML='<button id="rebalanceProfile" onclick="rebalanceProfile(\''+response[i].profilename+'\')"><img src="https://img.icons8.com/nolan/48/000000/scales.png" alt="Rebalance"></button>';        		     
         		}
+/// Recreate the ProfileList array for use throughout Admin page:
+                
+///
               // Send all divs to background, bring the one we're interested to front.
                 rstZindex();
                 profileListDiv.style.zIndex = 10;
+                return Promise.all(profileContentPromises);
               }
            else throw "status";
         }
-              
+           
+           
+        function populateProfiles(profilesArray)   {
+           var noProfiles = profilesArray.length;
+           for (var i = 0; i < noProfiles; i++) {
+               var profile = profileMap.get(profilesArray[i][0].profilename);
+               var noTickers = profilesArray[i].length;
+               for (var j = 0; j < noTickers; j++) {
+                  var aTicker = new TickerObject(profilesArray[i][j].symbol,profilesArray[i][j].exchange)
+                  profile.addTicker(aTicker, profilesArray[i][j].target);
+               }
+           }            
+           console.log(profileMap);
+        }
 //  ********************************************************************
 //  ************************ Delete Profile ****************************
 //  ********************************************************************           
@@ -120,13 +155,13 @@
       function deleteProfileTable(response, status, xhr)
         { 
            try {
-             if (status == 'success') 
+             if (status == 'success')      
               { console.log(response);
                 if ( response.includes('PROFILE TARGETS ARE RESET TO 0') ) {
                 console.log("Throw :"+response);
                 throw response;
                 }              
-                listProfiles();
+//                listProfiles();
                 location.reload();
               }
              else throw "status";

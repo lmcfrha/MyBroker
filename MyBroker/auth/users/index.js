@@ -21,28 +21,12 @@ app.get('/:user/accounts', function(req, res) {
 	  sql = mysql.format(sql,inserts);
 	  console.log(sql);
 	  adapters.mySqlPromise(sql)
-//	  .then((result)=>{var key = Object.keys(result[0])[0];console.log("Number of accounts using the profile: "+result[0][key])},
 	  .then((result)=>{
 		        var length = result.length;
 		        console.log("Result: "+JSON.stringify(result));
 		        res.send(result);
-		     /*   if ( length === 0 )
-		        	{
-		        	var sqldelete = 'DELETE FROM profile WHERE profilename=?';
-		  		    sqldelete = mysql.format(sqldelete,inserts);
-		  		    console.log(sqldelete);
-		  		    message = inserts + " DELETED.";
-		 		    return adapters.mySqlPromise(sqldelete);
-		        	}
-		        else {
-		        	var sqlupdate = 'UPDATE ticker SET target=0 WHERE profilename=?';
-		        	sqlupdate = mysql.format(sqlupdate,inserts);
-		        	console.log(sqlupdate);
-		  		    message = inserts+" used in "+length+" accounts. PROFILE TARGETS ARE RESET TO 0. "+inserts+" will be deleted after next rebalance.";
-		  		    return adapters.mySqlPromise(sqlupdate);
-		            }*/
 		        },
-			(error)=>{console.log("Delete oooops");console.log(error.code)})
+			(error)=>{console.log("Select oooops");console.log(error.code)})
 	  .catch(function() { message = "Screwed something went wrong!"  }) 
 	  .finally (function() {console.log(message);res.json(message);});
 });

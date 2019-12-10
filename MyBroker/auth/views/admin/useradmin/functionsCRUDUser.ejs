@@ -19,17 +19,30 @@
         { 
            if (status == 'success') 
               { console.log(response);
+              
+                usersList = new Map(); // key is username
+                
                 var arrayLength = response.length;
                 $("#usersTable tr:gt(0)").remove();
                 var table = document.getElementById('usersTable');
     		    for (var i = 0; i < arrayLength; i++) {
+    		    
+    		       let aUser = new User(response[i].username);
+    		       aUser.email = response[i].email;
+    		       aUser.firstname = response[i].firstname;
+    		       aUser.lastname = response[i].lastname;
+    		       aUser.type = response[i].type;
+    		       aUser.status = response[i].status;
+    		       aUser.creationDate = response[i].creationdate;
+    		       usersList.set(aUser.username, aUser);
+    		       
                    var row = table.insertRow();
                    var username=row.insertCell();
-                   username.innerHTML=response[i].username;
+                   username.innerHTML=aUser.username;
                    var email=row.insertCell();
-                   email.innerHTML=response[i].email;
+                   email.innerHTML=aUser.email;
                    var type=row.insertCell();
-                   type.innerHTML=response[i].type;
+                   type.innerHTML=aUser.type;
                    var manage=row.insertCell(); 
 // The old way to do it ...when I didn't know better:                   
 //                   manage.innerHTML='<button id="manage" onclick="manageUser(\''+response[i].username+'\')"><img src="https://img.icons8.com/color/48/000000/folder-invoices.png" alt="Manage"></button>';        		     
@@ -40,16 +53,17 @@
                    theIcon.alt = "Manage";
                    manage.appendChild(theIcon);
                    const idx = i;
-                   theIcon.addEventListener("click", function(){manageUser(response[idx]);});  
-// Notice the "const idx" line: this is because if you just use "i", the way closure works,
-// you'd end up with all cells with the same event listener handler using the same value of i, which 
-// would be the one at the end of the for loop. On top of it, that value would be outside the range
-// of response[]. Man that was hard to find...
+                   theIcon.addEventListener("click", function(){manageUser(aUser);});  
+// Notice the "let aUser" line: this is because if you just use var aUser, the way closure works,
+// you'd end up with all cells with the same event listener handler using the same value of aUser, which 
+// would be the one at the end of the for loop. Note that const would also work. Also the var scope if the function whereas
+// the let scope if the block only.
    		     
                    }
                 // Send all divs to background, bring the one we're interested to front.
                 rstZindex();
                 userListDiv.style.zIndex = 10;
+                console.log(usersList);
               }
            else throw "status";
         }
@@ -60,127 +74,106 @@
 
 /* Function handling the button to create a new profile - it creates a Profile object */      
       function manageUser(user) {
-        console.log(user);
+        
         $("#titleManagedUser").html(user.firstname+" "+user.lastname);
 // Go fetch the accounts and add table to page.
-        rstZindex();
-        manageUserDiv.style.zIndex = 10;        
-        
-//        $("#profileList").scrollTop(0);
-//        newProfile= new Profile('temp','F'); /* Create a temp Profile object with Low risk */        
-
-      }
-      
-//  ********************************************************************
-//  ************************ Edit User ******************************
-//  ********************************************************************     
-//  Function handling the button to edit a profile (from the profile list).
-//  Fetches the profile data, for editing. The profile is returned from the GET /admin/profile.
-
-    function editUser(user) {
-    <!-- This function turns the table into a JSON object and saves the new profile in the DB -->
-        try {
-             $.when( $.ajax({ method: 'GET', url: 'admin/profile', data: {name: profilename}, datatype: 'json' }) )
-              .then(editProfileTable);
+		try {
+             $.when( $.ajax({ method: 'GET', url: 'admin/users/'+user.username+'/accounts', datatype: 'json' }) )
+              .then(updateAccountsUserTable);
         }
         catch(e) {
           alert(e);
         }        
-      }
-// Once the profile is returned, display it in the profile edit div which is brought in the foreground:
-      function editProfileTable(response, status, xhr)
-        { 
-           if (status == 'success') 
-              { console.log(response);
-                updateProfileName(response[0].profilename,response[0].risk);
-                loadTickerRows('updateProfileTickers',response);
-              }
-           else throw "status";
-        }
+// Pop up the div on top
+        rstZindex();
+        manageUserDiv.style.zIndex = 10;        
         
-      function updateProfileName(name,risk) {        
-        updateProfileDiv.style.zIndex=10; /* Bring profile update div up front */
-        $("#profileList").scrollTop(0);      
-        modProfile= new Profile(name,risk); 
-        document.getElementById('updateProfileName').innerHTML=name;
-        document.getElementById('updateProfileRisk').innerHTML=risk;
-        console.log(modProfile);
       }
       
-
-
-//  ********************************************************************
-//  ************************ Delete Profile ****************************
-//  ********************************************************************           
-//  Function handling the button to delete a profile (from the profile list).
-//  Invokes DELETE /admin/profile with the profilename.
-//  Deletion logic: 
-//  - if no users have the profile, delete it immediately
-//  - do not offer the profile to users anymore 
-//  - if at least 1 user has the profile, set to 0 all targets (100% cash).
-//  - after the next rebalance, transfer the profile 100% cash in the user account and delete the profile.
-
-    function deleteProfile(profilename) {
-        if (confirm("You are about to delete profile "+profilename+". Press OK to confirm deletion, or Cancel")) {
-
-        try {
-             $.when( $.ajax({ method: 'DELETE', url: `admin/profile/${profilename}`, datatype: 'json' }) )
-              .then(deleteProfileTable);
-        }
-        catch(e) {
-          alert(e);
-        }   
-        
-        }     
-      }
-// Once the profile is returned, display it in the profile edit div which is brought in the foreground:
-      function deleteProfileTable(response, status, xhr)
-        { 
-           try {
-             if (status == 'success') 
-              { console.log(response);
-                if ( response.includes('PROFILE TARGETS ARE RESET TO 0') ) {
-                console.log("Throw :"+response);
-                throw response;
-                }              
-                listProfiles();
-                location.reload();
-              }
-             else throw "status";
-           }
-           catch(e) {
-             alert(e);
-           }   
-        }  
-        
-        
-//  ********************************************************************
-//  ************************ Rebalance Profile ****************************
-//  ********************************************************************           
-//  Function handling the button to rebalance a profile (from the profile list).
-//  Invokes POST /admin/rebalance with the profilename.
-//  
-//
-//
-
-    function rebalanceProfile(profilename) {
-      if (confirm("You are about to rebalance profile "+profilename+". Press OK to confirm deletion, or Cancel")) {
-
-        try {
-             var postdata = {profile:profilename};
-             console.log(postdata);
-             $.when( $.ajax({ method: 'POST', url: `accounts/rebalance`, data: postdata , datatype: 'json' }) )
-              .then(rebalanceProfileDone);
-        }
-        catch(e) {
-          alert(e);
-        }   
-        
-      }     
-     }
-// Once the profile is returned, display it in the profile edit div which is brought in the foreground:
-      function rebalanceProfileDone(response, status, xhr)
-        { 
+  
+  ///// Display user accounts and build accounts objects    
+      function updateAccountsUserTable(response, status, xhr) {
           if (status == 'success') 
-              {console.log(response);}
-        }  
+              { 
+              
+////////////////////////////////////////////////
+// Extract the set of accountid's for the user.            
+// So: retrieve the user object from the usersList created when Users was pressed, and populate the accounts map
+// with [(accountNo) -> [ (profilename) -> [ (tickername) -> [Ticker Object] ] ]. This is a map of a map of a map.
+// From stackoverflow, not necessarily the best but not the worst.
+
+                var arrayLength = response.length;
+                let theUser = usersList.get(response[0].username);
+                theUser.accounts.clear();  // clean up the accounts map before repopulating  with profiles            
+                
+                for (var i = 0; i < arrayLength; i++) {
+                    let aTicker = new TickerObject(response[i].symbol,response[i].exchange);
+                    aTicker.units = response[i].units;
+                    if (theUser.accounts.has(response[i].accountid)) {
+                       if (theUser.accounts.get(response[i].accountid).has(response[i].profilename)) {
+                          theUser.accounts.get(response[i].accountid).get(response[i].profilename).set(aTicker.symbol, aTicker);
+                       } 
+                       else {
+                          let aProfile = new Map();
+                          aProfile.set(aTicker.symbol, aTicker);
+                          theUser.accounts.get(response[i].accountid).set(response[i].profilename,aProfile);
+                       }   
+                    } 
+                    else {
+                       let aProfile = new Map();
+                       aProfile.set(aTicker.symbol, aTicker);
+                       let accountProfiles = new Map();
+                       accountProfiles.set(response[i].profilename, aProfile);
+                       theUser.accounts.set(response[i].accountid, accountProfiles);
+                    }  
+       
+                }
+                usersList.set(response[0].username, theUser);
+                // 
+                var accounts = response.map( x => x.accountid );
+                var accountsOfUser = [];
+                for (var i = 0; i < arrayLength; i++) {
+                    if (!accountsOfUser.includes(accounts[i])) {
+                        accountsOfUser.push(accounts[i]);
+                    }
+                }
+// Now form the accounts object for the user:                
+                var accountsNumber = accountsOfUser.length;
+                
+                account = new Account(0);
+///////////////////////////////////////////////
+////////////////////////////////////////////////
+// Generate the array of account objects for the user.
+                var arrayLength = response.length;
+                var accounts = response.map( x => x.accountid );
+                var accountsOfUser = [];
+                for (var i = 0; i < arrayLength; i++) {
+                    if (!accountsOfUser.includes(accounts[i])) {
+                        accountsOfUser.push(accounts[i]);
+                    }
+                }
+                console.log(accountsOfUser);
+///////////////////////////////////////////////              
+              
+              // Clean up the table from previous user
+                $("#userAccountsTable tr:gt(1)").remove();
+              // Add the rows for AccountId's
+                arrayLength = accountsOfUser.length;
+                for (var i = 0; i < arrayLength; i++) {
+                   var lastRow = document.getElementById("userAccountsTable").querySelector("tbody > tr:last-child");
+                   var addRow = document.createElement("tr");
+                   var addCell = document.createElement("td");
+                   addCell.setAttribute("colspan", "7");
+                   addCell.className = "accountId";
+                   addCell.id = addCell.innerHTML = accountsOfUser[i];
+                   addRow.appendChild(addCell);
+                   lastRow.after(addRow);
+                }
+                
+              
+           }
+           else {
+              throw "status";
+           }
+      
+      }

@@ -15,7 +15,7 @@
                    else if ($cell.text() == "Unknown")
                     throw "anUnknownSymbol";
                    else
-                   {return $cell.text().toUpperCase()}
+                   {return $cell.text().toUpperCase().trim()}
                  }
                }
                );
@@ -27,10 +27,10 @@
         		    if (map.has(tableJson[i].Ticker.toUpperCase())) 
         		    	throw "duplicateSymbol"; 
         		    else 
-        		    	map.set(tableJson[i].Ticker.toUpperCase(), tableJson[i].Ticker.toUpperCase());
+        		    	map.set(tableJson[i].Ticker.toUpperCase().trim(), tableJson[i].Ticker.toUpperCase());
     		 }
     		 if (tableselector === "#profileTickers") 
-    		   {  tableJson.name = newProfile.profileName.toUpperCase();
+    		   {  tableJson.name = newProfile.profileName.toUpperCase().trim();
                   tableJson.risk = newProfile.risk.toUpperCase();
                }
              else
@@ -45,9 +45,9 @@
                     { 
                       if (status == 'success') 
                          { console.log(response);
-                           listProfiles();
-                           newProfileDiv.style.zIndex=-1;
-                           newProfileListDiv.style.zIndex=10;
+//                           listProfiles();
+//                           newProfileDiv.style.zIndex=-1;
+//                           newProfileListDiv.style.zIndex=10;
                            $("#profileList").scrollTop(0);
                            location.reload();
                            console.log('After saving new profile, bringing the profile list to foreground');
@@ -60,9 +60,9 @@
                     { 
                       if (status == 'success') 
                          { console.log(response);
-                           listProfiles();
-                           newProfileDiv.style.zIndex=-1;
-                           newProfileListDiv.style.zIndex=10;
+//                           listProfiles();
+//                           newProfileDiv.style.zIndex=-1;
+//                           newProfileListDiv.style.zIndex=10;
                            $("#profileList").scrollTop(0);
                            location.reload();
                            console.log('After updating existing profile, bringing the profile list to foreground');
@@ -76,11 +76,11 @@
       }
       
       function cancel() {
-                           listProfiles();
-                           newProfileDiv.style.zIndex=-1;
-                           newProfileListDiv.style.zIndex=10;
+//                           listProfiles();
+//                           newProfileDiv.style.zIndex=-1;
+//                           newProfileListDiv.style.zIndex=10;
                            $("#profileList").scrollTop(0);
-                           location.reload();
+                           location.reload(false);
       }
 
 // Here we attach to the click event the save profile processing:      

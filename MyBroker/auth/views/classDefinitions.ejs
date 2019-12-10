@@ -1,0 +1,63 @@
+<script>
+
+function TickerObject(symbol,exch) {
+   this.symbol = symbol;
+   this.exch = exch;
+
+}
+
+function ProfileObject(name) {
+   this.name = name;
+   this.risk = null;
+   this.cashTarget = 100;
+   this.tickers = [];
+}
+ProfileObject.prototype.addTicker = function(ticker,target) {
+   if (ticker.symbol != "CASH" && (this.cashTarget - target) >= 0 ) {
+      this.cashTarget = this.cashTarget - target;
+      ticker.target = target;
+      this.tickers.push(ticker);
+   }
+   else {
+      if (ticker.symbol != "CASH") {alert('Cash target cannot go negative, lower stock targeted %');}
+   }
+}
+
+function Account() {
+   this.number = null;
+   this.profilesDistributions = new Map(); // a Map - Key is the profile name, value is the list of [ticker,units]
+}
+Account.prototype.rebalance = function(profile) {
+};
+Account.prototype.rebalanceAll = function() {
+};
+Account.prototype.addProfile = function(profile,amount) {
+}
+Account.prototype.drawCash = function(profile,amount) {
+}
+Account.prototype.closeProfile = function(profile) {
+}
+Account.prototype.closeAccount = function() {
+}
+
+
+
+
+function User(username) {
+  this.username = username;
+  this.firstname = null;
+  this.lastname = null;
+  this.salt = null;
+  this.hash = null;
+  this.email = null;
+  this.status = null;
+  this.type = null;
+  this.creationDate = null;
+  this.accounts = new Map();  
+}
+
+//////////// Global object creation for use by admin web page ////////
+// Profiles map contain all profiles and their description (stocks, targets, exchange):
+profileMap = new Map();
+//////////////////////////////////////////////////////////////////////
+</script>

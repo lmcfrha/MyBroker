@@ -27,8 +27,12 @@ $( function(){
 </script>
 <!-- End JQuery section -->
 
+<% include ../classDefinitions %>
+
+
 <% include ../stylesheets/adminstyle %>
-<% include ../stylesheets/adminuserstyle %>
+
+
   </head>
   <body>
     <div class="workspace">
@@ -39,8 +43,6 @@ $( function(){
        
           <button onclick="listProfiles()">Profiles</button>
           <button onclick="listUsers()">Users</button>
-          <button>Accounts</button>
-          <button>Blah</button>
        
       </div>
 
@@ -118,7 +120,7 @@ $( function(){
 </div>    
 </div>
 <% include dialogs %>    
-    <script>
+<script>
       /* Retrieve access to <div> elements for JavaScript control */
       const newProfileListDiv = document.querySelector("#profileList");
       const newProfileDiv = document.querySelector("#newProfile");
@@ -149,9 +151,9 @@ $( function(){
 <% include functionsCRUDProfile %> 
 <% include ./useradmin/functionsCRUDUser %>           
 <% include functionsUtil %> 
-<% include ./useradmin/functionsUtil %>   
+
 <% include initialize %> 
 
-    </script>
+</script>
   </body>
 </html>
