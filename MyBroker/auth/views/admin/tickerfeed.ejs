@@ -3,7 +3,7 @@
 // ...for me, brilliant.
       var tickerFeed=new EventSource('feed/tickers');
       tickerFeed.onmessage=function(m) {
-           var list = JSON.parse(m.data);
+           tickerTape = JSON.parse(m.data);
            $('#profileTickers tr, #updateProfileTickers tr').each(function() 
             {
            		var currentRow=$(this);
@@ -12,13 +12,13 @@
            		if ( ticker != 'CASH' ) {
 // If ticker is not found in feed from server, 
 // need to fetch it by hand from the util API and then update table:
-           		  if (typeof list[ticker] === "undefined" && ticker !== "") {
+           		  if (typeof tickerTape[ticker] === "undefined" && ticker !== "") {
     				  console.log(ticker +" is new - requesting the stock price");
     				  $.when( $.ajax({ url: `utils/stock/${ticker}` }) )
                        .then(function(response, status, xhr){currentRow.find(".stockPrice").html(response)});
     				
                   }
-                  else currentRow.find(".stockPrice").html(list[ticker]);
+                  else currentRow.find(".stockPrice").html(tickerTape[ticker]);
                 } 
  		     });
       };

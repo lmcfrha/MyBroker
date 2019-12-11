@@ -95,9 +95,13 @@
       function updateAccountsUserTable(response, status, xhr) {
           if (status == 'success') 
               { 
+              if (response.length === 0) {
+                 $("#userAccountsTable tr:gt(1)").remove();
+                 return
+              }
               
 ////////////////////////////////////////////////
-// Extract the set of accountid's for the user.            
+// Extract the set of accountid's for the user and build the user object          
 // So: retrieve the user object from the usersList created when Users was pressed, and populate the accounts map
 // with [(accountNo) -> [ (profilename) -> [ (tickername) -> [Ticker Object] ] ]. This is a map of a map of a map.
 // From stackoverflow, not necessarily the best but not the worst.
@@ -128,51 +132,49 @@
                     }  
        
                 }
+// Insert new user object in the (global) users list, keeping everything up to date.
                 usersList.set(response[0].username, theUser);
-                // 
-                var accounts = response.map( x => x.accountid );
-                var accountsOfUser = [];
-                for (var i = 0; i < arrayLength; i++) {
-                    if (!accountsOfUser.includes(accounts[i])) {
-                        accountsOfUser.push(accounts[i]);
-                    }
-                }
-// Now form the accounts object for the user:                
-                var accountsNumber = accountsOfUser.length;
                 
-                account = new Account(0);
-///////////////////////////////////////////////
-////////////////////////////////////////////////
-// Generate the array of account objects for the user.
-                var arrayLength = response.length;
-                var accounts = response.map( x => x.accountid );
-                var accountsOfUser = [];
-                for (var i = 0; i < arrayLength; i++) {
-                    if (!accountsOfUser.includes(accounts[i])) {
-                        accountsOfUser.push(accounts[i]);
-                    }
-                }
-                console.log(accountsOfUser);
-///////////////////////////////////////////////              
-              
-              // Clean up the table from previous user
+                let accountIt = theUser.accounts.keys();
+ 
+           
+// Now display user accounts/profiles
+// Clean up the table from previous user
                 $("#userAccountsTable tr:gt(1)").remove();
               // Add the rows for AccountId's
-                arrayLength = accountsOfUser.length;
-                for (var i = 0; i < arrayLength; i++) {
+                let accountNo = accountIt.next();
+                do {
                    var lastRow = document.getElementById("userAccountsTable").querySelector("tbody > tr:last-child");
                    var addRow = document.createElement("tr");
                    var addCell = document.createElement("td");
                    addCell.setAttribute("colspan", "7");
                    addCell.className = "accountId";
-                   addCell.id = addCell.innerHTML = accountsOfUser[i];
+                   addCell.id = addCell.innerHTML = accountNo.value;
                    addRow.appendChild(addCell);
                    lastRow.after(addRow);
-                }
-                
+                   // List profiles of the account:
+                   let userProfiles = theUser.accounts.get(accountNo.value);
+                   let profilesIt = userProfiles.keys();
+                   let profileName = profilesIt.next();
+                   do {
+                      lastRow = document.getElementById("userAccountsTable").querySelector("tbody > tr:last-child");
+                      addRow = document.createElement("tr");
+                      addCell = document.createElement("td");
+                      addCell.id = addCell.innerHTML = profileName.value;
+                      addRow.appendChild(addCell);
+                      let accountProfileValue = theUser.getAccountProfileValue(accountNo.value, profileName.value, tickerTape);
+                      addCell = document.createElement("td");
+                      addCell.id = addCell.innerHTML = accountProfileValue;
+                      addRow.appendChild(addCell);
+                      lastRow.after(addRow);                     
+                      profileName = profilesIt.next();
+                   } while (!profileName.done);
+                   accountNo = accountIt.next();
+                } while (!accountNo.done);
               
            }
            else {
+              $("#userAccountsTable tr:gt(1)").remove();
               throw "status";
            }
       

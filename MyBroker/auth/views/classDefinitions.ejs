@@ -55,6 +55,37 @@ function User(username) {
   this.creationDate = null;
   this.accounts = new Map();  
 }
+User.prototype.getAccountProfileValue = function(account, profile, livefeed) {
+  let profileDistribution = this.accounts.get(account).get(profile);
+  let profileDistIt = profileDistribution.keys();
+  let ticker = profileDistIt.next();
+  let accountProfileValue = 0;
+
+  do {
+     if (ticker.value === 'CASH') { 
+       accountProfileValue = accountProfileValue + profileDistribution.get(ticker.value).units;
+     } 
+     else {
+       accountProfileValue = accountProfileValue + profileDistribution.get(ticker.value).units*livefeed[ticker.value];
+     }
+     ticker = profileDistIt.next();
+  } while (!ticker.done)
+  return accountProfileValue;
+
+}
+User.prototype.getAccountValue = function(account, livefeed) {
+      this.accounts.get(account)
+}
+User.prototype.getTotalValue = function(livefeed) {
+}
+User.prototype.opAccountProfile = function(account, type, profile, amount ) {
+}
+User.prototype.rebalanceAccountProfile = function(account, profile) {
+}
+User.prototype.rebalanceAccount = function(account) {
+}
+User.prototype.rebalanceAll = function(account) {
+}
 
 //////////// Global object creation for use by admin web page ////////
 // Profiles map contain all profiles and their description (stocks, targets, exchange):
