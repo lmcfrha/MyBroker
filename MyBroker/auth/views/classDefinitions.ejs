@@ -40,7 +40,14 @@ Account.prototype.closeProfile = function(profile) {
 Account.prototype.closeAccount = function() {
 }
 
-
+function AccountCreationOrder(user,nickname,type,profiles) {
+   this.orderType = "createAccount";
+   this.owner = user;
+   this.accountNickname = nickname;
+   this.type = type;
+   this.profiles = profiles;
+   this.creationDate = null;
+}
 
 
 function User(username) {
@@ -59,14 +66,18 @@ User.prototype.getAccountProfileValue = function(account, profile, livefeed) {
   let profileDistribution = this.accounts.get(account).get(profile);
   let profileDistIt = profileDistribution.keys();
   let ticker = profileDistIt.next();
-  let accountProfileValue = 0;
+  let accountProfileValue = {
+  cash: 0,
+  total: 0
+  }
 
   do {
      if (ticker.value === 'CASH') { 
-       accountProfileValue = accountProfileValue + profileDistribution.get(ticker.value).units;
+       accountProfileValue.cash = profileDistribution.get(ticker.value).units;
+       accountProfileValue.total = accountProfileValue.total + accountProfileValue.cash;
      } 
      else {
-       accountProfileValue = accountProfileValue + profileDistribution.get(ticker.value).units*livefeed[ticker.value];
+       accountProfileValue.total = accountProfileValue.total + profileDistribution.get(ticker.value).units*livefeed[ticker.value];
      }
      ticker = profileDistIt.next();
   } while (!ticker.done)

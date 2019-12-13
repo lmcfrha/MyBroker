@@ -106,10 +106,26 @@ $( function(){
 <!-- --------------- START div's for MANAGE USER ------------ -->
       <div id="manageUser" class="manageUser">
         <p id="titleManagedUser">filled by manageUser function</p> 
-        <button id="addAccount onclick="addAccount('filled_by_manageUser_function')"> Add Account... </button>
+        <button id="addAccount" onclick="addAccount('filled_by_manageUser_function')"> Add Account... </button>
         <div style="overflow-x:auto;">
 
 <% include ./useradmin/tableUserAccounts %>   
+
+        </div>
+      </div>
+<!-- add account -->       
+      <div id="createAccount" class="manageUser">
+        <p id="accountCreation">filled by manageUser function</p> 
+        Account nickname: <input type="text" name="accountNickname"><p>
+        Account type: <select name="accountType">
+            <option value ="S">Sandbox</option>
+            <option value ="R">Real Money</option>
+        </select> 
+        
+
+        <div style="overflow-x:auto;">
+
+<% include ./accountadmin/createUserAccount %>   
 
         </div>
       </div>
@@ -128,6 +144,7 @@ $( function(){
       const profileListDiv = document.querySelector("#profileList");
       const userListDiv = document.querySelector("#userList");
       const manageUserDiv = document.querySelector("#manageUser");
+      const createAccountDiv = document.querySelector("#createAccount");
            
       class Ticker {
         constructor(symbol,target,exchange) {
@@ -149,7 +166,8 @@ $( function(){
 
 
 <% include functionsCRUDProfile %> 
-<% include ./useradmin/functionsCRUDUser %>           
+<% include ./useradmin/functionsCRUDUser %>
+<% include ./accountadmin/functionsCRUDaccount %>           
 <% include functionsUtil %> 
 
 <% include initialize %> 

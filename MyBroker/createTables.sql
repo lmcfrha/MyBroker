@@ -56,15 +56,15 @@ PRIMARY KEY (`username`)
 
 CREATE TABLE `account`
 (
+ `accountid`     integer NOT NULL UNIQUE AUTO_INCREMENT,
  `username`      varchar(45) NOT NULL UNIQUE ,
- `accountid`     integer NOT NULL UNIQUE ,
  `profilename`   varchar(45) NOT NULL ,
  `symbol`        varchar(45) NOT NULL ,
  `exchange`      varchar(45) NOT NULL ,
  `units`         int ,
  `cash`          decimal ,
  `profilename_1` varchar(45) NOT NULL ,
-PRIMARY KEY (`username`, `accountid`, `profilename`, `symbol`, `exchange`),
+PRIMARY KEY (`accountid`, `username`, `profilename`, `symbol`, `exchange`),
 KEY `fkIdx_32` (`username`),
 CONSTRAINT `FK_32` FOREIGN KEY `fkIdx_32` (`username`) REFERENCES `user` (`username`),
 KEY `fkIdx_36` (`profilename_1`),

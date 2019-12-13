@@ -15,6 +15,25 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: false }));
 app.use('/rebalance', rebalance);
 
+app.post('/:user', function(req, res) {
+	  res.send("account #:sdfsdf:");
+/*      var sql = 'SELECT * from account where username=? ORDER BY accountid';
+	  var inserts = [`${req.params.user}`];
+	  var message;
+	  sql = mysql.format(sql,inserts);
+	  console.log(sql);
+	  adapters.mySqlPromise(sql)
+	  .then((result)=>{
+		        var length = result.length;
+		        console.log("Result: "+JSON.stringify(result));
+		        res.send(result);
+		        },
+			(error)=>{console.log("Select oooops");console.log(error.code)})
+	  .catch(function() { message = "Screwed something went wrong!"  }) 
+	  .finally (function() {console.log(message);res.json(message);});*/
+});
+
+
 function rebalance(req,res) {
        console.log(req.body.profile);
 // Get the profile definition and all the accounts that have this profile

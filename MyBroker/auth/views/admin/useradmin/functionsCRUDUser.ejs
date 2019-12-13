@@ -107,7 +107,7 @@
 // From stackoverflow, not necessarily the best but not the worst.
 
                 var arrayLength = response.length;
-                let theUser = usersList.get(response[0].username);
+                theUser = usersList.get(response[0].username);
                 theUser.accounts.clear();  // clean up the accounts map before repopulating  with profiles            
                 
                 for (var i = 0; i < arrayLength; i++) {
@@ -164,8 +164,44 @@
                       addRow.appendChild(addCell);
                       let accountProfileValue = theUser.getAccountProfileValue(accountNo.value, profileName.value, tickerTape);
                       addCell = document.createElement("td");
-                      addCell.id = addCell.innerHTML = accountProfileValue;
+                      addCell.id = addCell.innerHTML = accountProfileValue.total;
                       addRow.appendChild(addCell);
+                      addCell = document.createElement("td");
+                      addCell.id = addCell.innerHTML = accountProfileValue.cash;
+                      addRow.appendChild(addCell);
+                      
+                      addCell = document.createElement("td");
+                      let theIcon = document.createElement("img");
+                      theIcon.src = "https://img.icons8.com/dusk/48/000000/deposit.png";
+                      theIcon.alt = "Deposit";
+                      addCell.appendChild(theIcon);
+                      theIcon.addEventListener("click", function(){deposit();}); 
+                      addRow.appendChild(addCell);
+                      
+                      addCell = document.createElement("td");
+                      theIcon = document.createElement("img");
+                      theIcon.src = "https://img.icons8.com/dusk/48/000000/withdrawal.png";
+                      theIcon.alt = "Withdrawal";
+                      addCell.appendChild(theIcon);
+                      theIcon.addEventListener("click", function(){withdraw();}); 
+                      addRow.appendChild(addCell);
+                      
+                      addCell = document.createElement("td");
+                      theIcon = document.createElement("img");
+                      theIcon.src = "https://img.icons8.com/dusk/48/000000/delete-forever.png";
+                      theIcon.alt = "Close";
+                      addCell.appendChild(theIcon);
+                      theIcon.addEventListener("click", function(){closedown();}); 
+                      addRow.appendChild(addCell);
+                      
+                      addCell = document.createElement("td");
+                      theIcon = document.createElement("img");
+                      theIcon.src = "https://img.icons8.com/nolan/48/000000/scales.png";
+                      theIcon.alt = "Rebalance";
+                      addCell.appendChild(theIcon);
+                      theIcon.addEventListener("click", function(){rebalance();}); 
+                      addRow.appendChild(addCell);
+                      
                       lastRow.after(addRow);                     
                       profileName = profilesIt.next();
                    } while (!profileName.done);

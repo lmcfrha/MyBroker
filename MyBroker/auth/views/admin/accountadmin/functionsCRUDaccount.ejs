@@ -1,0 +1,77 @@
+//  ********************************************************************
+//  ************************ Create Account    *************************
+//  ********************************************************************
+// Get the list of users, for display. 
+// The list is returned from the GET admin/users.
+
+      function addAccount(p) {
+// This function fetches the list of profiles from the DB and sets the update profile table callback
+// Get the name of the user for which we create the account
+         $("#accountCreation").html("Create New Account for "+theUser.firstname+" "+theUser.lastname);
+         $("#createAccount tr:gt(0)").remove();
+         let profilesIt = profileMap.keys();
+         let profileName = profilesIt.next();
+         do {
+               let lastRow = document.getElementById("createAccount").querySelector("tbody > tr:last-child");
+               let addRow = document.createElement("tr");
+               let addCell = document.createElement("td");
+               addCell.id = addCell.innerHTML = profileName.value;
+               addRow.appendChild(addCell);
+               
+               let x = document.createElement("INPUT");
+               x.setAttribute("id","accountCreationProfileSelection");
+               x.setAttribute("type", "checkbox");
+               x.setAttribute("name", profileName.value);
+               addCell = document.createElement("td");
+               addCell.appendChild(x);
+               addRow.appendChild(addCell);
+               
+               addRow.appendChild(addCell);
+                      
+               lastRow.after(addRow);                     
+               profileName = profilesIt.next();
+         } while (!profileName.done);
+
+
+         rstZindex();
+         createAccountDiv.style.zIndex = 10;            
+     }
+
+
+     function cancelAccountCreation() {
+         rstZindex();
+         manageUserDiv.style.zIndex = 10; 
+     }
+     
+     function createAccount() {
+         let profiles = [];
+         $("[id=accountCreationProfileSelection]").each( (index, element) => { if (element.checked) {profiles.push(element.name);} } );
+         if (profiles.length === 0) { alert("At least one profile must be selected"); return;}
+         creationOrder = new AccountCreationOrder(theUser.username, $("input[name|='accountNickname']").val(),$("select[name|='accountType']").val(), profiles); 
+         console.log(creationOrder);
+         
+//      Update the database
+        try {
+             $.when( $.ajax({ method: 'POST', url: 'admin/accounts/'+theUser.username, datatype: 'json', data: creationOrder }) )
+              .then(orderStatus,error);    
+        }
+        catch(e) {
+          alert(e);
+        }        
+        manageUser(theUser);
+        rstZindex();
+        manageUserDiv.style.zIndex = 10; 
+     }
+     
+     
+      
+     function orderStatus(response, status, xhr) {
+       console.log(response);
+       console.log(status);
+       console.log(xhr);
+     }
+     
+     function error(xhr, status, err) {
+       alert(xhr.responseText);
+       
+     }
