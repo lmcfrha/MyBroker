@@ -94,7 +94,7 @@ function authenticate(name, pass, fn) {
   adapters.dbconnection.query(sql,function (error, results, fields) {
   // Make the hash calculation with password entered - verify and call fn according to the result
 	if (error) throw error;
-	console.log(results[0].lastname);
+//	console.log(results[0].lastname);
 	hash({ password: pass, salt: results[0].salt }, function (err, pass, salt, hash) {
 			    if (err) return fn(err);
 			    if (hash === results[0].hash) return fn(null, results[0])

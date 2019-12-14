@@ -35,7 +35,7 @@ function dbload(step) {
 	switch(step) {
 	case 0: /* Connect to mysql server */
 		dbconnection.connect(function(err) {
-			console.log('-----------Entering STEP '+step)
+			console.log('-----------Entering STEP '+step);
 			  if (err) {
 				    console.error('Error connecting to db server: ' + err.message);
 				    console.error('... go troubleshoot the db server connection yourself');
@@ -48,7 +48,7 @@ function dbload(step) {
 		      });
 		break;
 	case 1: /* Select the mybroker DB */
-		console.log('-----------Entering STEP '+step)
+		console.log('-----------Entering STEP '+step);
 		dbconnection.changeUser({database : dbname}, function (err, result) {
 		    if (err) {
 		    	 console.log('Error selecting the database: ' + err.message);
@@ -63,8 +63,8 @@ function dbload(step) {
 		    });
 		break;
 	case 2: /* Create the DB, assuming it's a new installation */
-		console.log('-----------Entering STEP '+step)
-		console.log('recreate the sql server connection')
+		console.log('-----------Entering STEP '+step);
+		console.log('recreate the sql server connection');
 		dbconnection = mysql.createConnection({
 						host     : `${config_mysql.host}`,
 						port     : `${config_mysql.port}`,
@@ -83,7 +83,7 @@ function dbload(step) {
 		  });
 		break;
 	case 3.1: /* Read table profile */
-		console.log('-----------Entering STEP '+step)
+		console.log('-----------Entering STEP '+step);
 		console.log("Read PROFILE table.");
 		dbconnection.query(`${config_readtables.profile}`, function (err, results, fields) {
 			  // error will be an Error if one occurred during the query
@@ -103,7 +103,7 @@ function dbload(step) {
 		   });
 		break;		
 	case 3.2: /* Read table tickers */
-		console.log('-----------Entering STEP '+step)
+		console.log('-----------Entering STEP '+step);
 		console.log("Read TICKER table.");
 		dbconnection.query(`${config_readtables.ticker}`, function (err, results, fields) {
 			  // error will be an Error if one occurred during the query
@@ -126,7 +126,7 @@ function dbload(step) {
 
 /*		break; */
 	case 4.1: /* Create Table Profile */
-		console.log('-----------Entering STEP '+step)
+		console.log('-----------Entering STEP '+step);
 		console.log("Create PROFILES table: " + `${config_createtables.profile}`);
 		dbconnection.query(`${config_createtables.profile}`, function (err, results, fields) {
 			  // error will be an Error if one occurred during the query
@@ -174,7 +174,7 @@ function dbload(step) {
 		   });
 		break;
 	case 4.4: /* Create Table Account */
-		console.log('-----------Entering STEP '+step)
+		console.log('-----------Entering STEP '+step);
 		console.log("Create ACCOUNTS table: " + `${config_createtables.account}`);
 		dbconnection.query(`${config_createtables.account}`, function (err, results, fields) {
 			  // error will be an Error if one occurred during the query
@@ -188,9 +188,25 @@ function dbload(step) {
 		   		dbload(dbstep);
 		    }
 		   });
-		break;
-	case 4.5: /* Create Table Account */
-		console.log('-----------Entering STEP '+step)
+		break;	
+	case 4.5: /* Create Table AccountItem */
+			console.log('-----------Entering STEP '+step);
+			console.log("Create ACCOUNT ITEM table: " + `${config_createtables.accountrecord}`);
+			dbconnection.query(`${config_createtables.accountrecord}`, function (err, results, fields) {
+				  // error will be an Error if one occurred during the query
+				  // results will contain the results of the query
+				  // fields will contain information about the returned results fields (if any)
+			    if (err) {
+			    	 console.error('Error creating table: ' + err.message);
+			    	 console.log ('...go troubleshoot yourself.');
+			    } else {
+			    	dbstep = 4.6;
+			   		dbload(dbstep);
+			    }
+			   });
+		break;	
+	case 4.6: /* Create Table Transaction logs */
+		console.log('-----------Entering STEP '+step);
 		console.log("Create TRANSACTIONLOGS table: " + `${config_createtables.transactionlog}`);
 		dbconnection.query(`${config_createtables.transactionlog}`, function (err, results, fields) {
 			  // error will be an Error if one occurred during the query

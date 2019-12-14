@@ -15,19 +15,22 @@ app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.urlencoded({ extended: false }));
 app.get('/:user/accounts', function(req, res) {
-      var sql = 'SELECT * from account where username=? ORDER BY accountid';
+      var sql = 'SELECT account.*,accountrecord.*  FROM account INNER JOIN accountrecord ON account.accountid = accountrecord.accountid where account.username=? ORDER BY account.accountid';
 	  var inserts = [`${req.params.user}`];
 	  var message;
 	  sql = mysql.format(sql,inserts);
 	  console.log(sql);
+	  let resultid = new Object(); 
+      resultid.username = `${req.params.user}`; // include the username in the response - in case it doesn't have any account.
 	  adapters.mySqlPromise(sql)
 	  .then((result)=>{
 		        var length = result.length;
-		        console.log("Result: "+JSON.stringify(result));
-		        res.send(result);
-		        },
-			(error)=>{console.log("Select oooops");console.log(error.code)})
-	  .catch(function() { message = "Screwed something went wrong!"  }) 
+		        resultid.records = result;
+		        console.log("Result: "+JSON.stringify(resultid));
+		        res.send(resultid);
+		    },
+			(error)=>{console.log("Select Accounts SQL error");console.log(error.code)})
+	  .catch(function() { message = "Error backend query to Account tables"  }) 
 	  .finally (function() {console.log(message);res.json(message);});
 });
 

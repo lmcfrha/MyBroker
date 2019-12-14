@@ -37,7 +37,7 @@ CREATE TABLE `user`
 (
  `username`     varchar(45) NOT NULL ,
  `firstname`    varchar(45) NOT NULL ,
- `lastname`     varchar45) NOT NULL ,
+ `lastname`     varchar(45) NOT NULL ,
  `salt`         varchar(45) NOT NULL ,
  `hash`         varchar(45) NOT NULL ,
  `email`        varchar(45) NOT NULL ,
@@ -56,21 +56,36 @@ PRIMARY KEY (`username`)
 
 CREATE TABLE `account`
 (
- `accountid`     integer NOT NULL UNIQUE AUTO_INCREMENT,
- `username`      varchar(45) NOT NULL UNIQUE ,
- `profilename`   varchar(45) NOT NULL ,
- `symbol`        varchar(45) NOT NULL ,
- `exchange`      varchar(45) NOT NULL ,
- `units`         int ,
- `cash`          decimal ,
- `profilename_1` varchar(45) NOT NULL ,
-PRIMARY KEY (`accountid`, `username`, `profilename`, `symbol`, `exchange`),
+ `accountId`    integer NOT NULL AUTO_INCREMENT ,
+ `username`     varchar(45) NOT NULL ,
+ `nickname`     varchar(45) NOT NULL ,
+ `creationdate` datetime NOT NULL ,
+
+PRIMARY KEY (`accountId`),
+KEY `fkIdx_71` (`username`),
+CONSTRAINT `FK_71` FOREIGN KEY `fkIdx_71` (`username`) REFERENCES `user` (`username`)
+);
+
+-- ************************************** `accountItem`
+
+CREATE TABLE `accountItem`
+(
+ `username`    varchar(45) NOT NULL ,
+ `profilename` varchar(45) NOT NULL ,
+ `symbol`      varchar(45) NOT NULL ,
+ `exchange`    varchar(45) NOT NULL ,
+ `units`       int NULL ,
+ `accountId`   integer NOT NULL ,
+
+PRIMARY KEY),
 KEY `fkIdx_32` (`username`),
 CONSTRAINT `FK_32` FOREIGN KEY `fkIdx_32` (`username`) REFERENCES `user` (`username`),
-KEY `fkIdx_36` (`profilename_1`),
-CONSTRAINT `FK_36` FOREIGN KEY `fkIdx_36` (`profilename_1`) REFERENCES `profile` (`profilename`),
+KEY `fkIdx_36` (`profilename`),
+CONSTRAINT `FK_36` FOREIGN KEY `fkIdx_36` (`profilename`) REFERENCES `profile` (`profilename`),
 KEY `fkIdx_43` (`symbol`, `exchange`, `profilename`),
-CONSTRAINT `FK_43` FOREIGN KEY `fkIdx_43` (`symbol`, `exchange`, `profilename`) REFERENCES `ticker` (`symbol`, `exchange`, `profilename`)
+CONSTRAINT `FK_43` FOREIGN KEY `fkIdx_43` (`symbol`, `exchange`, `profilename`) REFERENCES `ticker` (`symbol`, `exchange`, `profilename`),
+KEY `fkIdx_69` (`accountId`),
+CONSTRAINT `FK_68` FOREIGN KEY `fkIdx_69` (`accountId`) REFERENCES `account` (`accountId`)
 );
 
 
@@ -78,16 +93,15 @@ CONSTRAINT `FK_43` FOREIGN KEY `fkIdx_43` (`symbol`, `exchange`, `profilename`) 
 
 CREATE TABLE `transactionlog`
 (
- `transactionid`  NOT NULL UNIQUE ,
- `username`      varchar(45) NOT NULL ,
- `accountid`     integer NOT NULL ,
+ `transactionid` varchar(45) NOT NULL DEFAULT UNIQUE ,
  `date`          datetime NOT NULL ,
  `type`          varchar(45) NOT NULL ,
  `description`   multilinestring NOT NULL ,
  `accountbefore` json NOT NULL ,
  `accountafter`  json NOT NULL ,
-PRIMARY KEY (`transactionid`, `username`, `accountid`),
-KEY `fkIdx_53` (`username`, `accountid`),
-CONSTRAINT `FK_53` FOREIGN KEY `fkIdx_53` (`username`, `accountid`) REFERENCES `account` (`username`, `accountid`)
-);
+ `accountId`     integer NOT NULL ,
 
+PRIMARY KEY (`transactionid`),
+KEY `fkIdx_79` (`accountId`),
+CONSTRAINT `FK_79` FOREIGN KEY `fkIdx_79` (`accountId`) REFERENCES `account` (`accountId`)
+);
