@@ -49,6 +49,14 @@ function AccountCreationOrder(user,nickname,type,profiles) {
    this.creationDate = null;
 }
 
+function DepositOrder(amount, user, account, profile) {
+   this.orderType = "deposit";
+   this.owner = user;
+   this.amount = amount;
+   this.account = account;
+   this.profile = profile;
+   this.creationDate = null;
+}
 
 function User(username) {
   this.username = username;

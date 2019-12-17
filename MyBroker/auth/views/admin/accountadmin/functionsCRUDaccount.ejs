@@ -62,16 +62,27 @@
          rstZindex();
          manageUserDiv.style.zIndex = 10; 
       }
-     
-     
+
+      function depositToAccount(amount,user,account,profile) {
       
-     function orderStatus(response, status, xhr) {
-       console.log(response);
-       console.log(status);
-       console.log(xhr);
-     }
+        var depositOrder = new DepositOrder(amount, user, account, profile); 
+	    try {
+            $.when( $.ajax({ method: 'POST', url: 'admin/accounts/'+username, datatype: 'json', data: depositOrder }) )
+            .then(orderStatus,error);
+          }
+          catch(e) {
+            alert(e);
+          }              
+      }     
+      
+      function orderStatus(response, status, xhr) {
+         console.log(response);
+         console.log(status);
+         console.log(xhr);
+         manageUser(theUser);
+      }
      
-     function error(xhr, status, err) {
-       alert(xhr.responseText);
+      function error(xhr, status, err) {
+         alert(xhr.responseText);
        
-     }
+      }

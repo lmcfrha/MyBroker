@@ -14,6 +14,7 @@ function  initializeWidgets() {
  
       // From https://jqueryui.com/dialog/#modal-form
      deposit = $( "#deposit" ),
+     d = $("#dialog-form-add")
      allFields = $( [] ).add( deposit ),
      tips = $( ".validateTips" );
  
@@ -49,8 +50,8 @@ function  initializeWidgets() {
       valid = checkRegexp( deposit, /^[0-9]+\.?[0-9]*$/, "Format is x.y" );
  
       if ( valid ) {
-    	  
-console.log("This is where I go update the cash value");
+    	
+        depositToAccount(deposit.val(), d.find("#username").text(), d.find("#account").text(),d.find("#profile").text());
         dialog_add.dialog( "close" );
       }
       return valid;
