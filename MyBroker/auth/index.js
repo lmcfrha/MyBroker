@@ -12,6 +12,8 @@ mysql      = require('mysql');
 var accounts = require('./accounts');
 var users = require('./users');
 
+const adminUtils = require('./adminutils');
+
 /* Session store business... */
 var MySQLStore = require('express-mysql-session')(session);
 const config_mysql = require('../config/appConfig.json')['mysql']
@@ -155,13 +157,28 @@ app.get('/register', function(req, res){
 	  .catch(function(error) { console.log( "something went wrong:" ); console.log( error.code )}) ;
 });
 
+/* function retrieveProfileContent(profilename,res) {
+ var sql = "SELECT * FROM ticker, profile where profile.profilename='"+profilename+"' and ticker.profilename='"+profilename+"'";
+ console.log(sql);
+ adapters.mySqlPromise(sql)
+ .then((result)=>{
+	 console.log("Profile definition:");console.log(result);
+	 if (res != null) {res.send(result);}
+	 else {return result;}
+      } )
+ .catch(function(error) { console.log( "something went wrong:" ); console.log( error.code )}) ;
+ }
+ */
 app.get('/admin/profile', roleAdmin, function(req, res){
     // Retrieve profiles
+	  adminUtils.retrieveProfileContent(req.query.name,res);
+	  /*
 	  var sql = "SELECT * FROM ticker, profile where profile.profilename='"+req.query.name+"' and ticker.profilename='"+req.query.name+"'";
 	  console.log(sql);
 	  adapters.mySqlPromise(sql)
 	  .then((result)=>{console.log("Profile definition:");console.log(result);res.send(result);} )
-	  .catch(function(error) { console.log( "something went wrong:" ); console.log( error.code )}) ;
+	  .catch(function(error) { console.log( "something went wrong:" ); console.log( error.code )});
+	  */
 });
 app.put('/admin/profile', roleAdmin, function(req, res){
     // Called when a modified profile is Saved.

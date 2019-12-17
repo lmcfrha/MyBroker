@@ -51,17 +51,17 @@
          console.log(creationOrder);
          
 //      Update the database
-        try {
-             $.when( $.ajax({ method: 'POST', url: 'admin/accounts/'+theUser.username, datatype: 'json', data: creationOrder }) )
-              .then(orderStatus,error);    
-        }
-        catch(e) {
-          alert(e);
-        }        
-        manageUser(theUser);
-        rstZindex();
-        manageUserDiv.style.zIndex = 10; 
-     }
+         try {
+              $.when( $.ajax({ method: 'POST', url: 'admin/accounts/'+theUser.username, datatype: 'json', data: creationOrder }) )
+               .then(orderStatus,error);    
+         }
+         catch(e) {
+           alert(e);
+         }        
+         manageUser(theUser);
+         rstZindex();
+         manageUserDiv.style.zIndex = 10; 
+      }
      
      
       

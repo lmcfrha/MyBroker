@@ -228,7 +228,6 @@ function dbload(step) {
 dbload(dbstep);  /* create or read the DB tables */ 
 exports.dbconnection=dbconnection; /* Keep the dbconnection and make it available */
 
-
 /**
  * 
  *  Alphavantage finance adapter 
@@ -308,9 +307,57 @@ var mySqlPromise = function (sql) {
 		return new Promise(function(resolve,reject) {
 			dbconnection.query(sql, (error, results, fields) => 
 			{
-				if (error) return reject(error);
-				resolve(results);
+				if (error) reject(error);
+				else resolve(results);
 			} )
 		}) 
 	}
 exports.mySqlPromise=mySqlPromise;
+
+var mySqlPromiseTx = function () {
+/* See:
+ * https://stackoverflow.com/questions/5178697/mysql-insert-into-multiple-tables-database-normalization
+ * https://www.npmjs.com/package/mysql#transactions
+ * 
+ */
+		return new Promise(function(resolve,reject) {
+			dbconnection.beginTransaction((error) => 
+			{
+				if (error) reject(error);
+				else resolve("Transaction BEGIN");
+			} )
+		}) 
+	}
+exports.mySqlPromiseTx=mySqlPromiseTx;
+
+var mySqlPromiseCommit = function () {
+	/* See:
+	 * https://stackoverflow.com/questions/5178697/mysql-insert-into-multiple-tables-database-normalization
+	 * https://www.npmjs.com/package/mysql#transactions
+	 * 
+	 */
+			return new Promise(function(resolve,reject) {
+				dbconnection.commit((error) => 
+				{
+					if (error) reject(error);
+					else resolve("Transaction COMMITED");
+				} )
+			}) 
+		}
+	exports.mySqlPromiseCommit=mySqlPromiseCommit;
+	
+	var mySqlPromiseRollback = function () {
+		/* See:
+		 * https://stackoverflow.com/questions/5178697/mysql-insert-into-multiple-tables-database-normalization
+		 * https://www.npmjs.com/package/mysql#transactions
+		 * 
+		 */
+				return new Promise(function(resolve,reject) {
+					dbconnection.rollback((error) => 
+					{
+						if (error) reject(error);
+						else resolve("TRANSACTION ROLLED BACK!");
+					})
+				}) 
+			}
+		exports.mySqlPromiseRollback=mySqlPromiseRollback;

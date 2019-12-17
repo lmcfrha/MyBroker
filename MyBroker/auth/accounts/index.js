@@ -5,6 +5,8 @@
  */
 var express = require('express');
 var path = require('path');
+var adminUtils = require('../adminutils');
+
 
 var app = module.exports = express();
 //config
@@ -16,23 +18,65 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/rebalance', rebalance);
 
 app.post('/:user', function(req, res) {
-	  res.send("account #:sdfsdf:");
-/*      var sql = 'SELECT * from account where username=? ORDER BY accountid';
-	  var inserts = [`${req.params.user}`];
-	  var message;
-	  sql = mysql.format(sql,inserts);
-	  console.log(sql);
-	  adapters.mySqlPromise(sql)
-	  .then((result)=>{
-		        var length = result.length;
-		        console.log("Result: "+JSON.stringify(result));
-		        res.send(result);
-		        },
-			(error)=>{console.log("Select oooops");console.log(error.code)})
-	  .catch(function() { message = "Screwed something went wrong!"  }) 
-	  .finally (function() {console.log(message);res.json(message);});*/
+	  console.log(req.body);
+	  let owner = req.body.owner;
+	  let profiles = req.body.profiles;
+	  let orderType = req.body.orderType;
+	  let accountNickname = req.body.accountNickname;
+	  let type = req.body.type;
+      let creationDate = req.body.creationDate;
+      let profilesDescriptor = [];
+// now retrieve the Profiles:
+      let profilesContentP = profiles.map( profilename=>adminUtils.retrieveProfileContent(profilename,null));
+      Promise.all(profilesContentP)
+      .then((results)=>{
+    	  profilesDescriptor = results;
+    	  console.log(profilesDescriptor);
+    	  // Start Tx to begin updating the DB
+    	  return adapters.mySqlPromiseTx();
+          })
+      .then((result)=>{
+    	 console.log(result);
+    	 var sql1 = "INSERT INTO account (username, nickname, creationdate) VALUES (?,?,NOW())";
+    	 var inserts1 = [owner, accountNickname];
+    	 sql1 = mysql.format(sql1,inserts1);
+    	 return adapters.mySqlPromise(sql1);
+    	  })
+      .then((result)=>{
+    	 console.log(result);
+    	 let noProfiles = profilesDescriptor.length; 
+    	 let insertsPromises = [];
+    	 for (var i = 0; i < noProfiles; i++) {
+    		 let profileContent = profilesDescriptor[i];
+    		 let noTickers = profileContent.length;
+    		 for (var j = 0; j < noTickers; j++) {
+    			 let sqln = "INSERT INTO accountrecord VALUES (?,?,LAST_INSERT_ID(),?,0)";
+    			 let insert = [profileContent[j].symbol,profileContent[j].exchange,profileContent[j].profilename];
+    			 sqln = mysql.format(sqln,insert);
+    			 insertsPromises.push(adapters.mySqlPromise(sqln));
+    		 }
+    	 }
+    	 return Promise.all(insertsPromises);
+      })
+      .then((result)=>{
+    	   console.log(result);
+    	   return adapters.mySqlPromiseCommit();
+       })
+      .then((result)=>{console.log(result);})
+      .catch((error)=>{
+    	  console.log("Error during Tx : "+error+ "- Attempting Rollback...");
+    	  return adapters.mySqlPromiseRollback();
+          })
+      .then((result)=>{console.log(result)},(reject)=>{console.log("!! ROLLBACK OPERATION FAILED !!"+reject)});
+    	 
+	  res.send("Account added to "+owner);
+
 });
 
+function addUserAccount(owner, accountNickname, type, profiles, creationDate) {
+	console.log(profiles);
+	console.log(owner);
+}
 
 function rebalance(req,res) {
        console.log(req.body.profile);

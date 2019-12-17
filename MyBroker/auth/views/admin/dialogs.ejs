@@ -2,3 +2,22 @@
 <p>The sum of all the targets is over 100%. 
 Modify to ensure total is less than 100%</p>
 </div>
+
+<!-- --------------- START div's for USER DIALOGS ------------ -->
+   <div id="dialog-form-add" title="CASH Deposit">
+     <p class="validateTips"></p>
+     Username: <span id="username">A</span><br>
+     Account: <span id="account">B</span><br>
+     Profile: <span id="profile">C</span><br>
+     
+ 
+     <form>
+       <fieldset>
+         <label for="deposit">Amount</label>
+         <input type="text" name="deposit" id="deposit" value="" class="text ui-widget-content ui-corner-all">
+ 
+         <!-- Allow form submission with keyboard without duplicating the dialog button -->
+<!--         <input type="submit" tabindex="-1" style="position:absolute; top:-1000px"> -->
+       </fieldset>
+     </form>
+   </div>

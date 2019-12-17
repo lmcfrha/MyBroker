@@ -164,9 +164,10 @@
                       lastRow = document.getElementById("userAccountsTable").querySelector("tbody > tr:last-child");
                       addRow = document.createElement("tr");
                       addCell = document.createElement("td");
-                      addCell.id = addCell.innerHTML = profileName.value;
+                      let profilename = profileName.value;
+                      addCell.id = addCell.innerHTML = profilename;
                       addRow.appendChild(addCell);
-                      let accountProfileValue = theUser.getAccountProfileValue(accountNo.value, profileName.value, tickerTape);
+                      let accountProfileValue = theUser.getAccountProfileValue(accountNo.value, profilename, tickerTape);
                       addCell = document.createElement("td");
                       addCell.id = addCell.innerHTML = accountProfileValue.total;
                       addRow.appendChild(addCell);
@@ -177,9 +178,10 @@
                       addCell = document.createElement("td");
                       let theIcon = document.createElement("img");
                       theIcon.src = "https://img.icons8.com/dusk/48/000000/deposit.png";
+                      theIcon.id = theUser.username + "|" + accountNo.value + "|" + profilename;
                       theIcon.alt = "Deposit";
                       addCell.appendChild(theIcon);
-                      theIcon.addEventListener("click", function(){deposit();}); 
+                      theIcon.addEventListener("click", function(e){fillDialog("#dialog-form-add",e.target.id);dialog_add.dialog("open");}); 
                       addRow.appendChild(addCell);
                       
                       addCell = document.createElement("td");
@@ -218,4 +220,10 @@
               throw "status";
            }
       
+      }
+
+      
+      function deposit(user,profile) {
+      console.log(user);
+      console.log(profile);
       }

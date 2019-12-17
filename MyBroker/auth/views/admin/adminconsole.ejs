@@ -13,17 +13,14 @@
 
 <!-- html to json plugin: https://www.npmjs.com/package/table-to-json -->
     <script src="/scripts/jquery.tabletojson.js"></script>
+<!-- Initialize the jQuery UI Widgets -->
+    <script src="/scripts/initialize.jquery.ui.widgets.js"></script>
 
 <!-- JQuery section -->
 <script>
-$( function(){
-  $("#over100").dialog({ 
-     autoOpen: false,   
-     classes: {
-        "ui-dialog": "error"
-     } 
-     });
-} );
+
+$( initializeWidgets );
+
 </script>
 <!-- End JQuery section -->
 
@@ -130,11 +127,9 @@ $( function(){
         </div>
       </div>
 <!-- --------------- END div's for MANAGE USER ------------ -->
-
-    </div>
-       
-</div>    
+          
 </div>
+
 <% include dialogs %>    
 <script>
       /* Retrieve access to <div> elements for JavaScript control */
