@@ -74,7 +74,7 @@ CREATE TABLE `accountItem`
  `profilename` varchar(45) NOT NULL ,
  `symbol`      varchar(45) NOT NULL ,
  `exchange`    varchar(45) NOT NULL ,
- `units`       int NULL ,
+ `units`       float NULL ,
  `accountId`   integer NOT NULL ,
 
 PRIMARY KEY),

@@ -58,6 +58,14 @@ function DepositOrder(amount, user, account, profile) {
    this.creationDate = null;
 }
 
+function RebalanceOrder(user, account, profile) {
+   this.orderType = "rebalance";
+   this.owner = user;
+   this.account = account;
+   this.profile = profile;
+   this.creationDate = null;
+}
+
 function User(username) {
   this.username = username;
   this.firstname = null;

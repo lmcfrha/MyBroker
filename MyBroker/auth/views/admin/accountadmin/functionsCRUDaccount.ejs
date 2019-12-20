@@ -74,7 +74,20 @@
             alert(e);
           }              
       }     
+  
+  
+      function rebalanceAccount(username, account, profile) {
       
+        var rebalanceOrder = new RebalanceOrder(username, account, profile); 
+	    try {
+            $.when( $.ajax({ method: 'POST', url: 'admin/accounts/'+username, datatype: 'json', data: rebalanceOrder }) )
+            .then(orderStatus,error);
+          }
+          catch(e) {
+            alert(e);
+          }              
+      }     
+            
       function orderStatus(response, status, xhr) {
          console.log(response);
          console.log(status);

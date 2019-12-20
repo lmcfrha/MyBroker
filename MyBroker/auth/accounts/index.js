@@ -22,11 +22,17 @@ app.post('/:user', function(req, res) {
 	  let owner = req.body.owner;
 	  let orderType = req.body.orderType;
 	  
-	  if (orderType === 'deposit') {     // Deposit on CASH account of a profile
+	  if (orderType === 'rebalance'){ // Rebalance Account
+		  let account = req.body.account;
+		  let profile = req.body.profile;
+		  adminUtils.rebalanceProfileAccount(account,profile,res);
+		  return;
+	  }  
+	  else if (orderType === 'deposit') {     // Deposit on CASH account of a profile
 		  let account = req.body.account;
 		  let profile = req.body.profile;
 		  let amount = req.body.amount;
-		  adminUtils.depositProfileAccount(amount,account,profile,res)
+		  adminUtils.depositProfileAccount(amount,account,profile,res);
 		  return;
 	  }
 	  else if (orderType === 'createAccount'){  // Create Account

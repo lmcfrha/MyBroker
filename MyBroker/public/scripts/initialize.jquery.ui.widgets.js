@@ -14,7 +14,7 @@ function  initializeWidgets() {
  
       // From https://jqueryui.com/dialog/#modal-form
      deposit = $( "#deposit" ),
-     d = $("#dialog-form-add")
+     d = $("#dialog-form-add"),
      allFields = $( [] ).add( deposit ),
      tips = $( ".validateTips" );
  
@@ -78,5 +78,31 @@ function  initializeWidgets() {
       event.preventDefault();
       addAmount();
     }); 
-    
+ 
+
+<!-- The dialog to confirm the rebalance of a profile of an account -->  
+
+    var r = $("#dialog-rebalance");
+
+
+    function rebalance() {
+        rebalanceAccount(r.find("#username").text(), r.find("#account").text(),r.find("#profile").text());
+        dialog_rebalance.dialog( "close" );
+    }
+
+    dialog_rebalance = $("#dialog-rebalance").dialog({
+       autoOpen: false,
+       resizable: false,
+       height: "auto",
+       width: 400,
+       modal: true,
+       buttons: {
+         "Rebalance now": rebalance,
+         Cancel: function() {
+             dialog_rebalance.dialog( "close" );
+              }
+       }
+    });
+
+
 }

@@ -62,7 +62,7 @@ app.use(function(req, res, next){
 // to do first the middleware roleAdmin function and then the subapp.
 app.use('/admin/users/',roleAdmin);
 app.use('/admin/users/', users);
-app.use('/accounts/', roleAdmin);
+app.use('/admin/accounts/', roleAdmin);
 app.use('/admin/accounts/', accounts);
 
 /**

@@ -203,9 +203,10 @@
                       addCell = document.createElement("td");
                       theIcon = document.createElement("img");
                       theIcon.src = "https://img.icons8.com/nolan/48/000000/scales.png";
+                      theIcon.id = theUser.username + "|" + accountNo.value + "|" + profilename;
                       theIcon.alt = "Rebalance";
                       addCell.appendChild(theIcon);
-                      theIcon.addEventListener("click", function(){rebalance();}); 
+                      theIcon.addEventListener("click", function(e){fillDialog("#dialog-rebalance",e.target.id);dialog_rebalance.dialog("open");}); 
                       addRow.appendChild(addCell);
                       
                       lastRow.after(addRow);                     
