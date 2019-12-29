@@ -54,10 +54,10 @@
                    manage.appendChild(theIcon);
                    const idx = i;
                    theIcon.addEventListener("click", function(){manageUser(aUser);});  
-// Notice the "let aUser" line: this is because if you just use var aUser, the way closure works,
+// Notice the "let aUser" line: this is because if you just use var aUser, because the var scope if the function 
+// whereas the let scope if the block only,
 // you'd end up with all cells with the same event listener handler using the same value of aUser, which 
-// would be the one at the end of the for loop. Note that const would also work. Also the var scope if the function whereas
-// the let scope if the block only.
+// would be the one at the end of the for loop. Note that const would also work.
    		     
                    }
                 // Send all divs to background, bring the one we're interested to front.

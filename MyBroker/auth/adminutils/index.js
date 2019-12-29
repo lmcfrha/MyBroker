@@ -30,28 +30,33 @@ function depositProfileAccount(amount,account,profilename,res) {
 exports.depositProfileAccount=depositProfileAccount;
 
 
-function rebalanceProfileAccount(account,profilename,res) {
+function rebalanceProfileAccount(user,account,profilename,res) {
+	let theUser = user;
 	let profile=[];
+	var currentStatement=[];
 	let accountProfile=[];
+	let updatedAccountProfile=[];
 	let orders=[];
 	let ordersStatus=[];
 	let err = null;
 	let errRollback = null;
 	var cashIdx = null;
+	let message = null;
 	// First, retrieve the profile definition (profile):
 	let profilePromise = retrieveProfileContent(profilename,null);
 	profilePromise
 	 .then((result)=>{
 		      profile=result;
-			  sql = "SELECT * FROM mybroker.accountrecord where accountid=? and profilename=?;";
-			  inserts = [account, profilename];
-			  sql = mysql.format(sql,inserts);
-			  console.log(sql);
-			  return adapters.mySqlPromise(sql);		       
+			  return getStatementP(account,profilename);      
 		   })
 	// Then, retrieve the account profile current statement (accountProfile):	   
      .then((result)=>{
-    	 accountProfile=result; 
+    	 //This is to clone the array: an assignement will not work as
+    	 // currentStatement = result will contain the same object references as accountProfile: when the 
+    	 // CASH object is updated, you'll update it also in the currentStatement. See: 
+    	 // https://stackoverflow.com/questions/597588/how-do-you-clone-an-array-of-objects-in-javascript
+    	 currentStatement= JSON.parse(JSON.stringify(result));
+         accountProfile=result; 
     	 console.log("Account Profile: ");
     	 console.log(accountProfile); 
     	 return accountProfile;})
@@ -85,8 +90,13 @@ function rebalanceProfileAccount(account,profilename,res) {
      .then((results)=>{
 	     return adapters.mySqlPromiseCommit();
       })
+    // Get the updated statement
      .then((result)=>{
     	 console.log(result);
+		 return getStatementP(account,profilename);    	 
+     })
+     .then((result)=>{
+    	 updatedAccountProfile=result;
      })
 // In case of problem, attempt a rollback:
      .catch((error)=>{
@@ -102,27 +112,53 @@ function rebalanceProfileAccount(account,profilename,res) {
     	   )
      .finally(() => {
     		 if (err != null && errRollback != null) {
+    			  
     			 res.send(err+"\nA DB rollback was attempted but failed:\n"+errRollback);
     		 }
     		 else if (err != null) {
     			 res.send(err);
     		 }
     		 else {
-        	     let a = JSON.stringify(orders);
-        	     let b = JSON.stringify(ordersStatus);
-        	     res.send(a+b);
-    		 }    
-      adapters.emailTransport.sendMail(adapters.mailOptions, function(error, info){
-	  if (error) {
-		    console.log(error);
-		  } else {
-		    console.log('Email sent: ' + info.response);
-		  }
-		});
+        	     let a = JSON.stringify(orders,null,2);
+        	     let b = JSON.stringify(ordersStatus,null,2);
+        	     message = "BEFORE REBALANCE:\n"+JSON.stringify(currentStatement,null,2)+ 
+        	     "\nORDERS:\n"+a+"\nEXECUTIONS:\n"+b+"\nAFTER REBALANCE:\n"+
+        	     JSON.stringify(updatedAccountProfile,null,2);
+        	     
+        	     res.send(message);
+        	     
+        	     let to = theUser.email;
+        	     let subject = "Manual account rebalance from myBroker Admin on profile "+profilename+" of account "+account;
+        	     let text = message; 
+                 sendMail(to, subject, message);
+    		 }   
+
     		 
      })
 }
 exports.rebalanceProfileAccount=rebalanceProfileAccount;
+
+
+function sendMail(to, subject, message) {
+    adapters.mailOptions.to = to;
+    adapters.mailOptions.subject = subject;
+    adapters.mailOptions.text = message; 
+    adapters.emailTransport.sendMail(adapters.mailOptions, function(error, info){
+	 if (error) {
+	    console.log(error);
+	 } else {
+		    console.log('Email sent: ' + info.response);
+		  }
+		})	
+}
+
+
+function getStatementP(account,profilename){
+	  sql = "SELECT * FROM mybroker.accountrecord where accountid=? and profilename=?;";
+	  inserts = [account, profilename];
+	  sql = mysql.format(sql,inserts);
+	  return adapters.mySqlPromise(sql);		
+}
 
 function accountSettlement(orderStatus,accountProfile,cashIdx) {
 // Update all account entries per execution order status:
@@ -133,12 +169,12 @@ function accountSettlement(orderStatus,accountProfile,cashIdx) {
               if ( orderStatus.status === 'fulfilled' && orderStatus.execution.type === 'buy') {
     			 sql = "INSERT INTO accountrecord (`symbol`, `exchange`, `accountid`, `profilename`, `units`) VALUES (?, 'TSX', ?, ?, ?) ON DUPLICATE KEY UPDATE `units`= `units` + ?";
 			     inserts = [orderStatus.execution.ticker, orderStatus.execution.account, orderStatus.execution.profile, orderStatus.execution.qty, orderStatus.execution.qty];
-			     accountProfile[cashIdx].units = accountProfile[cashIdx].units - orderStatus.execution.qty*orderStatus.unitcost;
+			     accountProfile[cashIdx].units = accountProfile[cashIdx].units - (orderStatus.execution.qty*orderStatus.unitcost*100)/100;
               } 
               else if (orderStatus.status === 'fulfilled' && orderStatus.execution.type === 'sell') {
      			 sql = "INSERT INTO accountrecord (`symbol`, `exchange`, `accountid`, `profilename`, `units`) VALUES (?, 'TSX', ?, ?, ?) ON DUPLICATE KEY UPDATE `units`= `units` - ?";
 			     inserts = [orderStatus.execution.ticker, orderStatus.execution.account, orderStatus.execution.profile, orderStatus.execution.qty, orderStatus.execution.qty];
-			     accountProfile[cashIdx].units = accountProfile[cashIdx].units + orderStatus.execution.qty*orderStatus.unitcost; 
+			     accountProfile[cashIdx].units = accountProfile[cashIdx].units + (orderStatus.execution.qty*orderStatus.unitcost*100)/100; 
               }
               sql = mysql.format(sql,inserts);	
               console.log(sql);
@@ -312,7 +348,7 @@ function getTotalValue(profileRecords) {
     	 let unitvalue = null;
     	 if (symbol === "CASH" ) { unitvalue = 1.0}
     	 else {unitvalue = quotesTape[symbol]}
-    	 total = total + unitvalue*units;
+    	 total = total + (unitvalue*units*100)/100;
      }
      return total;
 }

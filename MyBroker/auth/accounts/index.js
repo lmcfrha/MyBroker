@@ -19,13 +19,13 @@ app.use('/rebalance', rebalance);
 
 app.post('/:user', function(req, res) {
 	  console.log(req.body);
-	  let owner = req.body.owner;
 	  let orderType = req.body.orderType;
 	  
 	  if (orderType === 'rebalance'){ // Rebalance Account
+		  let owner = JSON.parse(req.body.owner);
 		  let account = req.body.account;
 		  let profile = req.body.profile;
-		  adminUtils.rebalanceProfileAccount(account,profile,res);
+		  adminUtils.rebalanceProfileAccount(owner,account,profile,res);
 		  return;
 	  }  
 	  else if (orderType === 'deposit') {     // Deposit on CASH account of a profile
@@ -36,6 +36,7 @@ app.post('/:user', function(req, res) {
 		  return;
 	  }
 	  else if (orderType === 'createAccount'){  // Create Account
+		 let owner = req.body.owner;
    	     let profiles = req.body.profiles;
 	     let orderType = req.body.orderType;
 	     let accountNickname = req.body.accountNickname;

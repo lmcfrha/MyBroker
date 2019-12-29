@@ -63,9 +63,9 @@
          manageUserDiv.style.zIndex = 10; 
       }
 
-      function depositToAccount(amount,user,account,profile) {
+      function depositToAccount(amount,username,account,profile) {
       
-        var depositOrder = new DepositOrder(amount, user, account, profile); 
+        var depositOrder = new DepositOrder(amount, username, account, profile); 
 	    try {
             $.when( $.ajax({ method: 'POST', url: 'admin/accounts/'+username, datatype: 'json', data: depositOrder }) )
             .then(orderStatus,error);
@@ -76,11 +76,11 @@
       }     
   
   
-      function rebalanceAccount(username, account, profile) {
+      function rebalanceAccount(theUser, account, profile) {
       
-        var rebalanceOrder = new RebalanceOrder(username, account, profile); 
+        var rebalanceOrder = new RebalanceOrder(theUser, account, profile); 
 	    try {
-            $.when( $.ajax({ method: 'POST', url: 'admin/accounts/'+username, datatype: 'json', data: rebalanceOrder }) )
+            $.when( $.ajax({ method: 'POST', url: 'admin/accounts/'+theUser.username, datatype: 'json', data: rebalanceOrder }) )
             .then(orderStatus,error);
           }
           catch(e) {

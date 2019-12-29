@@ -86,7 +86,7 @@ function  initializeWidgets() {
 
 
     function rebalance() {
-        rebalanceAccount(r.find("#username").text(), r.find("#account").text(),r.find("#profile").text());
+        rebalanceAccount(JSON.stringify(theUser), r.find("#account").text(),r.find("#profile").text());
         dialog_rebalance.dialog( "close" );
     }
 

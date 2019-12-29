@@ -370,7 +370,7 @@ var mySqlPromiseCommit = function () {
 	  service: 'gmail',
 	  auth: {
 	    user: 'mylittlebroker@gmail.com',
-	    pass: ''
+	    pass: 'mybroker@gmail'
 	  }
 	});
 	exports.emailTransport=transporter;
@@ -382,10 +382,3 @@ var mySqlPromiseCommit = function () {
 	};
 	exports.mailOptions=mailOptions;
 	
-	transporter.sendMail(mailOptions, function(error, info){
-	  if (error) {
-	    console.log(error);
-	  } else {
-	    console.log('Email sent: ' + info.response);
-	  }
-	});
