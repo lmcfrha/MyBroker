@@ -289,8 +289,8 @@ function quotesTapeP(dbCon, tickerTable, symbolCol, exchCol) {
 			quotesTape[$(".labs-symbol").html().trim()]= price;
 		    }
 		console.log(JSON.stringify(quotesTape))},
-	        (reason) => {console.log("CESTMOIIIIII "+reason+quotes);})
-	.catch (function(err) {console.log("COUCOUUUU"+err);for (i=0;i<quotes.length;i++) {quotesTape[quotes[i]]=55;}});
+	        (reason) => {console.log(reason);})
+	.catch (function(err) {console.log(err);});
 }
 
 /* Set the periodic execution of quotes retrieval from TSX, updating the quotesTape table and printing to consolelogs */
@@ -360,4 +360,32 @@ var mySqlPromiseCommit = function () {
 					})
 				}) 
 			}
-		exports.mySqlPromiseRollback=mySqlPromiseRollback;
+	exports.mySqlPromiseRollback=mySqlPromiseRollback;
+	
+	
+	/* EMAIL Nodemailer section */
+	var nodemailer = require('nodemailer');
+
+	var transporter = nodemailer.createTransport({
+	  service: 'gmail',
+	  auth: {
+	    user: 'mylittlebroker@gmail.com',
+	    pass: ''
+	  }
+	});
+	exports.emailTransport=transporter;
+	var mailOptions = {
+	  from: 'mylittlebroker@gmail.com',
+	  to: 'hanslik@yahoo.com',
+	  subject: 'Sending Email using Node.js',
+	  text: 'That was easy!'
+	};
+	exports.mailOptions=mailOptions;
+	
+	transporter.sendMail(mailOptions, function(error, info){
+	  if (error) {
+	    console.log(error);
+	  } else {
+	    console.log('Email sent: ' + info.response);
+	  }
+	});

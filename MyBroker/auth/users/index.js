@@ -30,8 +30,10 @@ app.get('/:user/accounts', function(req, res) {
 		        res.send(resultid);
 		    },
 			(error)=>{console.log("Select Accounts SQL error");console.log(error.code)})
-	  .catch(function() { message = "Error backend query to Account tables"  }) 
-	  .finally (function() {console.log(message);res.json(message);});
+	  .catch((error) => {
+		  console.log("Error backend query to Account tables: "+error);
+		  res.json({ error: error })
+		  }) 
 });
 
 app.get('/', function(req, res){

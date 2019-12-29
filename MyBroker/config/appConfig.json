@@ -27,5 +27,9 @@
 	  "refresh": 10000
   },
   
+  "mybroker": {
+	  "maxdeviation": 0.10   
+  },
+  
   "localization": "US"
 }
